@@ -1,5 +1,7 @@
 // packages/types/src/models/transport.ts
 
+import type { ObjectId, Location } from './common';
+
 export interface TransportStop {
   id: ObjectId;
   name: string;

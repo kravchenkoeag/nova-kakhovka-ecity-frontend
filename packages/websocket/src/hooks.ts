@@ -4,12 +4,12 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { WebSocketClient, type WSMessage } from './client';
-import { useAccessToken } from '@ecity/auth';
+
+// Імпорт useAccessToken з @ecity/auth (може бути недоступним в цьому пакеті)
+// Тому замінюємо на параметр token який передається ззовні
 
 // React Hook для WebSocket з'єднання
-
-export function useWebSocket(enabled = true) {
-  const token = useAccessToken();
+export function useWebSocket(token: string | null, enabled = true) {
   const [client, setClient] = useState<WebSocketClient | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState<WSMessage[]>([]);
@@ -24,7 +24,7 @@ export function useWebSocket(enabled = true) {
       token,
       onConnect: () => setIsConnected(true),
       onDisconnect: () => setIsConnected(false),
-      onMessage: (message) => {
+      onMessage: (message: WSMessage) => {
         setMessages((prev) => [...prev, message]);
       },
       onError: (error) => {

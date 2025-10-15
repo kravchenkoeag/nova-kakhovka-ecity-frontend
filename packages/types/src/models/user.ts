@@ -1,10 +1,5 @@
 // packages/types/src/models/user.ts
-import { ObjectId } from './common';
-
-export interface Location {
-  type: 'Point';
-  coordinates: [number, number]; // [longitude, latitude]
-}
+import type { ObjectId, Location } from './common';
 
 export interface UserStatus {
   message: string;

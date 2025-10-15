@@ -1,5 +1,5 @@
 // packages/types/src/models/notification.ts
-
+import type { ObjectId } from './common';
 export interface Notification {
   id: ObjectId;
   user_id: ObjectId;

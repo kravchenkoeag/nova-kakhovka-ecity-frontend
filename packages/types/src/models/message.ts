@@ -1,5 +1,5 @@
 // packages/types/src/models/message.ts
-
+import type { ObjectId } from './common';
 export interface MessageReaction {
   user_id: ObjectId;
   reaction: string;

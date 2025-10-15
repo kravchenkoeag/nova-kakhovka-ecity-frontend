@@ -1,5 +1,8 @@
 // packages/types/src/api/requests.ts
 
+import type { Location, ContactInfo } from '../models/common';
+import type { TransportSchedule } from '../models/transport';
+
 // Auth requests
 export interface RegisterRequest {
   email: string;

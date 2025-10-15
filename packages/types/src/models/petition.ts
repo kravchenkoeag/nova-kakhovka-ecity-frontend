@@ -1,5 +1,5 @@
 // packages/types/src/models/petition.ts
-
+import type { ObjectId } from './common';
 export interface PetitionSignature {
   user_id: ObjectId;
   full_name: string;

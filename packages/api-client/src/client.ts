@@ -2,17 +2,11 @@
 
 import type { ApiError } from '@ecity/types';
 
-/**
- * Конфігурація для запиту до API
- */
 interface RequestConfig extends RequestInit {
   token?: string;
 }
 
-/**
- * Базовий клієнт для взаємодії з backend API
- * Підтримує GET, POST, PUT, DELETE, PATCH методи з автоматичною авторизацією
- */
+// Базовий клієнт для взаємодії з backend API
 export class ApiClient {
   private baseUrl: string;
   private defaultHeaders: HeadersInit;
@@ -24,20 +18,20 @@ export class ApiClient {
     };
   }
 
-  /**
-   * Виконує HTTP запит до API
-   */
+  // Виконує HTTP запит до API
   private async request<T>(
     endpoint: string,
     config: RequestConfig = {}
   ): Promise<T> {
     const { token, ...fetchConfig } = config;
 
-    const headers: HeadersInit = {
-      ...this.defaultHeaders,
-      ...config.headers,
+    // Створюємо об'єкт headers
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(config.headers as Record<string, string>),
     };
 
+    // Додаємо токен авторизації якщо він переданий
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
@@ -48,6 +42,7 @@ export class ApiClient {
         headers,
       });
 
+      // Обробка помилок HTTP
       if (!response.ok) {
         const error: ApiError = await response.json().catch(() => ({
           error: `HTTP Error ${response.status}`,
@@ -55,6 +50,7 @@ export class ApiClient {
         throw new Error(error.error || `Request failed: ${response.status}`);
       }
 
+      // Парсимо JSON відповідь
       return response.json();
     } catch (error) {
       console.error('API Request Error:', error);
@@ -62,10 +58,12 @@ export class ApiClient {
     }
   }
 
+  // GET запит
   async get<T>(endpoint: string, token?: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'GET', token });
   }
 
+  // POST запит
   async post<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
@@ -74,6 +72,7 @@ export class ApiClient {
     });
   }
 
+  // PUT запит
   async put<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
@@ -82,10 +81,12 @@ export class ApiClient {
     });
   }
 
+  // DELETE запит
   async delete<T>(endpoint: string, token?: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE', token });
   }
 
+  // PATCH запит
   async patch<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PATCH',

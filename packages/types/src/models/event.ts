@@ -1,10 +1,6 @@
 // packages/types/src/models/event.ts
 
-export interface ContactInfo {
-  type: 'phone' | 'email' | 'telegram' | 'viber' | 'whatsapp';
-  value: string;
-  label?: string;
-}
+import type { ObjectId, Location, ContactInfo } from './common';
 
 export interface Event {
   id: ObjectId;

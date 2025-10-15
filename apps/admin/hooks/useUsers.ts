@@ -7,7 +7,7 @@ import { useAccessToken } from '@ecity/auth';
 import { apiClient } from '@/lib/api-client';
 import type { User } from '@ecity/types';
 
-/ Hook для отримання списку користувачів
+// Hook для отримання списку користувачів
 export function useUsers() {
   const token = useAccessToken();
 
@@ -63,3 +63,4 @@ export function useBlockUser() {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
+}

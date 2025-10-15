@@ -1,4 +1,5 @@
 // packages/types/src/models/group.ts
+import type { ObjectId } from './common';
 
 export interface Group {
   id: ObjectId;

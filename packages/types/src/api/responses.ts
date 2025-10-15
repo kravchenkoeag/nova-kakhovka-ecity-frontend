@@ -1,4 +1,5 @@
 // packages/types/src/api/responses.ts
+import type { User } from '../models/user';
 
 export interface AuthResponse {
   token: string;

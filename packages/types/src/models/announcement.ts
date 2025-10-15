@@ -1,5 +1,7 @@
 // packages/types/src/models/announcement.ts
 
+import type { ObjectId, Location, ContactInfo } from './common';
+
 export interface Announcement {
   id: ObjectId;
   author_id: ObjectId;

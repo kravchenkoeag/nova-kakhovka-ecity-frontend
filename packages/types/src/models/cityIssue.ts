@@ -1,5 +1,5 @@
 // packages/types/src/models/cityIssue.ts
-
+import type { ObjectId, Location } from './common';
 export interface IssueComment {
   id: ObjectId;
   author_id: ObjectId;

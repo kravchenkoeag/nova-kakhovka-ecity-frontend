@@ -4,26 +4,20 @@
 
 import { useSession } from 'next-auth/react';
 
-/**
- * Хук для отримання токена
- */
+// Hook для отримання access token на клієнті
 export function useAccessToken() {
   const { data: session } = useSession();
-  return session?.accessToken;
+  return session?.user?.accessToken || null;
 }
 
-/**
- * Хук для перевірки ролі модератора
- */
+// Hook для перевірки чи користувач модератор
 export function useIsModerator() {
   const { data: session } = useSession();
-  return session?.user?.is_moderator || false;
+  return session?.user?.isModerator || false;
 }
 
-/**
- * Хук для отримання ID користувача
- */
+// Hook для отримання ID користувача
 export function useUserId() {
   const { data: session } = useSession();
-  return session?.user?.id;
+  return session?.user?.id || null;
 }

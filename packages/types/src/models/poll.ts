@@ -1,5 +1,5 @@
 // packages/types/src/models/poll.ts
-
+import type { ObjectId } from './common';
 export interface PollOption {
   id: ObjectId;
   text: string;
