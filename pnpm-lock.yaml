@@ -293,6 +293,22 @@ importers:
         specifier: ^5.3.0
         version: 5.9.3
 
+  packages/websocket:
+    dependencies:
+      '@ecity/types':
+        specifier: workspace:*
+        version: link:../types
+      react:
+        specifier: ^18.3.0
+        version: 18.3.1
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.21
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
+
 packages:
 
   /@alloc/quick-lru@5.2.0:
