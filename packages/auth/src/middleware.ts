@@ -13,7 +13,7 @@ export async function createAuthMiddleware(
 ) {
   const { requireModerator = false, publicPaths = [] } = options;
 
-  // Перевіряємо чи це публічний шлях
+  // РџРµСЂРµРІС–СЂСЏС”РјРѕ С‡Рё С†Рµ РїСѓР±Р»С–С‡РЅРёР№ С€Р»СЏС…
   const isPublicPath = publicPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)
   );
@@ -22,20 +22,20 @@ export async function createAuthMiddleware(
     return NextResponse.next();
   }
 
-  // Отримуємо токен
+  // РћС‚СЂРёРјСѓС”РјРѕ С‚РѕРєРµРЅ
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  // Якщо немає токена - редірект на логін
+  // РЇРєС‰Рѕ РЅРµРјР°С” С‚РѕРєРµРЅР° - СЂРµРґС–СЂРµРєС‚ РЅР° Р»РѕРіС–РЅ
   if (!token) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Перевіряємо права модератора
+  // РџРµСЂРµРІС–СЂСЏС”РјРѕ РїСЂР°РІР° РјРѕРґРµСЂР°С‚РѕСЂР°
   if (requireModerator && !token.is_moderator) {
     return NextResponse.redirect(new URL('/unauthorized', request.url));
   }
@@ -43,7 +43,7 @@ export async function createAuthMiddleware(
   return NextResponse.next();
 }
 
-// Middleware для адмін панелі
+// Middleware РґР»СЏ Р°РґРјС–РЅ РїР°РЅРµР»С–
 export async function adminMiddleware(request: NextRequest) {
   return createAuthMiddleware(request, {
     requireModerator: true,
@@ -51,7 +51,7 @@ export async function adminMiddleware(request: NextRequest) {
   });
 }
 
-// Middleware для користувацького додатку
+// Middleware РґР»СЏ РєРѕСЂРёСЃС‚СѓРІР°С†СЊРєРѕРіРѕ РґРѕРґР°С‚РєСѓ
 export async function webMiddleware(request: NextRequest) {
   return createAuthMiddleware(request, {
     requireModerator: false,

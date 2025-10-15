@@ -4,95 +4,110 @@
 
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { Button, Avatar } from '@ecity/ui';
-import { Menu, Bell, X } from 'lucide-react';
+import { Button } from '@ecity/ui';
+import { 
+  Menu, 
+  X, 
+  User, 
+  LogOut, 
+  MessageSquare, 
+  Calendar,
+  Megaphone,
+  FileText,
+  MapPin,
+  Bus
+} from 'lucide-react';
 import { useState } from 'react';
 
+// РќР°РІС–РіР°С†С–Р№РЅР° РїР°РЅРµР»СЊ РґР»СЏ РІРµР±-РґРѕРґР°С‚РєСѓ
 export function Navbar() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
-    { name: 'Групи', href: '/groups' },
-    { name: 'Події', href: '/events' },
-    { name: 'Оголошення', href: '/announcements' },
-    { name: 'Петиції', href: '/petitions' },
-    { name: 'Опитування', href: '/polls' },
-    { name: 'Проблеми міста', href: '/city-issues' },
-    { name: 'Транспорт', href: '/transport' },
+    { name: 'Р“СЂСѓРїРё', href: '/groups', icon: MessageSquare },
+    { name: 'РџРѕРґС–С—', href: '/events', icon: Calendar },
+    { name: 'РћРіРѕР»РѕС€РµРЅРЅСЏ', href: '/announcements', icon: Megaphone },
+    { name: 'РџРµС‚РёС†С–С—', href: '/petitions', icon: FileText },
+    { name: 'РџСЂРѕР±Р»РµРјРё', href: '/city-issues', icon: MapPin },
+    { name: 'РўСЂР°РЅСЃРїРѕСЂС‚', href: '/transport', icon: Bus },
   ];
 
   return (
-    <nav className="bg-white border-b border-gray-200">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <span className="text-xl font-bold text-blue-600">
-              Nova Kakhovka
-            </span>
-          </Link>
+    <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          {/* Р›РѕРіРѕС‚РёРї */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-sm font-bold text-white">NK</span>
+              </div>
+              <span className="text-xl font-bold text-gray-900 hidden sm:block">
+                e-City
+              </span>
+            </Link>
+          </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-6">
+          {/* Desktop РЅР°РІС–РіР°С†С–СЏ */}
+          <div className="hidden md:flex items-center space-x-1">
             {navigation.map((item) => (
               <Link
-                key={item.href}
+                key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-blue-600 transition-colors"
+                className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors"
               >
-                {item.name}
+                <item.icon className="h-4 w-4" />
+                <span>{item.name}</span>
               </Link>
             ))}
           </div>
 
-          {/* Right side */}
-          <div className="flex items-center gap-4">
-            {session ? (
-              <>
-                <Button variant="ghost" size="sm" className="relative">
-                  <Bell className="w-5 h-5" />
-                  <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
-                </Button>
-
+          {/* РљРѕСЂРёСЃС‚СѓРІР°С‡ */}
+          <div className="flex items-center space-x-4">
+            {status === 'loading' ? (
+              <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
+            ) : session ? (
+              <div className="flex items-center space-x-3">
                 <Link href="/profile">
-                  <Avatar className="cursor-pointer">
-                    {session.user.name?.charAt(0)}
-                  </Avatar>
+                  <Button variant="ghost" size="sm">
+                    <User className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">РџСЂРѕС„С–Р»СЊ</span>
+                  </Button>
                 </Link>
-
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => signOut({ callbackUrl: '/' })}
                 >
-                  Вийти
+                  <LogOut className="h-4 w-4" />
                 </Button>
-              </>
+              </div>
             ) : (
-              <>
+              <div className="flex items-center space-x-2">
                 <Link href="/login">
-                  <Button variant="outline" size="sm">
-                    Увійти
+                  <Button variant="ghost" size="sm">
+                    Р’С…С–Рґ
                   </Button>
                 </Link>
                 <Link href="/register">
                   <Button size="sm">
-                    Реєстрація
+                    Р РµС”СЃС‚СЂР°С†С–СЏ
                   </Button>
                 </Link>
-              </>
+              </div>
             )}
 
             {/* Mobile menu button */}
             <button
-              className="lg:hidden"
+              type="button"
+              className="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? (
-                <X className="w-6 h-6" />
+                <X className="h-6 w-6" />
               ) : (
-                <Menu className="w-6 h-6" />
+                <Menu className="h-6 w-6" />
               )}
             </button>
           </div>
@@ -101,16 +116,17 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-gray-200">
-          <div className="container mx-auto px-4 py-4 space-y-2">
+        <div className="md:hidden border-t">
+          <div className="px-2 pt-2 pb-3 space-y-1">
             {navigation.map((item) => (
               <Link
-                key={item.href}
+                key={item.name}
                 href={item.href}
-                className="block py-2 text-gray-700 hover:text-blue-600"
+                className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {item.name}
+                <item.icon className="h-5 w-5" />
+                <span>{item.name}</span>
               </Link>
             ))}
           </div>

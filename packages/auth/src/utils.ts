@@ -4,14 +4,14 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from './next-auth.config';
 
 /**
- * Отримати сесію на сервері
+ * РћС‚СЂРёРјР°С‚Рё СЃРµСЃС–СЋ РЅР° СЃРµСЂРІРµСЂС–
  */
 export async function getSession() {
   return await getServerSession(authOptions);
 }
 
 /**
- * Отримати токен доступу
+ * РћС‚СЂРёРјР°С‚Рё С‚РѕРєРµРЅ РґРѕСЃС‚СѓРїСѓ
  */
 export async function getAccessToken() {
   const session = await getSession();
@@ -19,7 +19,7 @@ export async function getAccessToken() {
 }
 
 /**
- * Перевірити чи користувач модератор
+ * РџРµСЂРµРІС–СЂРёС‚Рё С‡Рё РєРѕСЂРёСЃС‚СѓРІР°С‡ РјРѕРґРµСЂР°С‚РѕСЂ
  */
 export async function isModerator() {
   const session = await getSession();
@@ -27,7 +27,7 @@ export async function isModerator() {
 }
 
 /**
- * Отримати ID користувача
+ * РћС‚СЂРёРјР°С‚Рё ID РєРѕСЂРёСЃС‚СѓРІР°С‡Р°
  */
 export async function getUserId() {
   const session = await getSession();

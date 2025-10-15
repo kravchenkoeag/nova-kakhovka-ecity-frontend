@@ -1,33 +1,39 @@
 // packages/api-client/src/endpoints/transport.ts
 
 import type { TransportRoute, TransportVehicle, CreateRouteRequest } from '@ecity/types';
+import { ApiClient } from '../client';
 
 export class TransportApi {
   constructor(private client: ApiClient) {}
 
+  // Отримати список маршрутів транспорту
   async getRoutes(): Promise<TransportRoute[]> {
     return this.client.get<TransportRoute[]>('/api/v1/transport/routes');
   }
 
+  // Отримати маршрут за ID
   async getRoute(id: string): Promise<TransportRoute> {
     return this.client.get<TransportRoute>(`/api/v1/transport/routes/${id}`);
   }
 
+  // Отримати live відстеження транспорту
   async getLiveTracking(routeId: string): Promise<{ live_vehicles: any[] }> {
     return this.client.get(`/api/v1/transport/live?route_id=${routeId}`);
   }
 
+  // Отримати найближчі зупинки
   async getNearbyStops(lat: number, lng: number, radius = 1): Promise<any> {
     return this.client.get(
       `/api/v1/transport/stops/nearby?lat=${lat}&lng=${lng}&radius=${radius}`
     );
   }
 
-  // Admin only
+  // Створити маршрут (admin)
   async createRoute(data: CreateRouteRequest, token: string): Promise<TransportRoute> {
     return this.client.post<TransportRoute>('/api/v1/admin/transport/routes', data, token);
   }
 
+  // Отримати список транспортних засобів (admin)
   async getVehicles(routeId?: string, token?: string): Promise<TransportVehicle[]> {
     const query = routeId ? `?route_id=${routeId}` : '';
     return this.client.get<TransportVehicle[]>(

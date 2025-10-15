@@ -5,17 +5,21 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button, Input, Card } from '@ecity/ui';
+import { Button, Input, Label } from '@ecity/ui';
+import { AlertCircle } from 'lucide-react';
 
+/**
+ * Сторінка логіну для модераторів
+ */
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,66 +34,78 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError('������� email ��� ������');
+        setError('Невірний email або пароль');
+        setIsLoading(false);
         return;
       }
 
       router.push(callbackUrl);
       router.refresh();
     } catch (err) {
-      setError('������� �������. ��������� �� ���.');
-    } finally {
+      setError('Сталася помилка. Спробуйте ще раз.');
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <Card className="w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            ���� ������
-          </h1>
-          <p className="text-gray-600 mt-2">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        {/* Логотип та заголовок */}
+        <div className="text-center">
+          <div className="mx-auto h-16 w-16 rounded-lg bg-blue-500 flex items-center justify-center">
+            <span className="text-2xl font-bold text-white">NK</span>
+          </div>
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Nova Kakhovka e-City
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Вхід для модераторів
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Форма логіну */}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="rounded-md bg-red-50 p-4">
+              <div className="flex">
+                <AlertCircle className="h-5 w-5 text-red-400" />
+                <div className="ml-3">
+                  <p className="text-sm text-red-800">{error}</p>
+                </div>
+              </div>
             </div>
           )}
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@example.com"
-              required
-              autoComplete="email"
-            />
-          </div>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email адреса</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1"
+                placeholder="moderator@example.com"
+              />
+            </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              ������
-            </label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="��������"
-              required
-              autoComplete="current-password"
-            />
+            <div>
+              <Label htmlFor="password">Пароль</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1"
+                placeholder="••••••••"
+              />
+            </div>
           </div>
 
           <Button
@@ -97,10 +113,25 @@ export default function LoginPage() {
             className="w-full"
             disabled={isLoading}
           >
-            {isLoading ? '����...' : '�����'}
+            {isLoading ? 'Вхід...' : 'Увійти'}
           </Button>
         </form>
-      </Card>
+
+        {/* Тестові креденшали для розробки */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 p-4 bg-yellow-50 rounded-md">
+            <p className="text-xs text-yellow-800 font-medium">
+              Тестові креденшали:
+            </p>
+            <p className="text-xs text-yellow-700 mt-1">
+              Email: moderator@example.com
+            </p>
+            <p className="text-xs text-yellow-700">
+              Password: moderator123
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

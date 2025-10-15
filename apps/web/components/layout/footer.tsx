@@ -1,52 +1,87 @@
 // apps/web/components/layout/footer.tsx
 
 import Link from 'next/link';
+import { Mail, Phone, MapPin } from 'lucide-react';
 
+// Footer РґР»СЏ РІРµР±-РґРѕРґР°С‚РєСѓ
 export function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300">
-      <div className="container mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-white font-bold text-lg mb-4">
-              Nova Kakhovka e-City
-            </h3>
-            <p className="text-sm">
-              Цифрова платформа для покращення життя в місті
+          {/* РџСЂРѕ РїСЂРѕРµРєС‚ */}
+          <div className="col-span-1 md:col-span-2">
+            <div className="flex items-center space-x-2 mb-4">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-sm font-bold text-white">NK</span>
+              </div>
+              <span className="text-xl font-bold text-white">
+                Nova Kakhovka e-City
+              </span>
+            </div>
+            <p className="text-sm text-gray-400 max-w-md">
+              Р•Р»РµРєС‚СЂРѕРЅРЅР° РїР»Р°С‚С„РѕСЂРјР° РґР»СЏ РіСЂРѕРјР°РґРё РќРѕРІРѕС— РљР°С…РѕРІРєРё. 
+              РћР±'С”РґРЅСѓС”РјРѕ РјРµС€РєР°РЅС†С–РІ С‚Р° СЃС‚РІРѕСЂСЋС”РјРѕ РїСЂРѕСЃС‚С–СЂ РґР»СЏ СЃРїС–Р»РєСѓРІР°РЅРЅСЏ, 
+              РІРёСЂС–С€РµРЅРЅСЏ РїСЂРѕР±Р»РµРј С‚Р° СЂРѕР·РІРёС‚РєСѓ РјС–СЃС‚Р°.
             </p>
           </div>
 
+          {/* РЁРІРёРґРєС– РїРѕСЃРёР»Р°РЅРЅСЏ */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Розділи</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/groups" className="hover:text-white">Групи</Link></li>
-              <li><Link href="/events" className="hover:text-white">Події</Link></li>
-              <li><Link href="/announcements" className="hover:text-white">Оголошення</Link></li>
-              <li><Link href="/petitions" className="hover:text-white">Петиції</Link></li>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
+              РџРѕСЃРёР»Р°РЅРЅСЏ
+            </h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/about" className="text-sm hover:text-white transition-colors">
+                  РџСЂРѕ РїСЂРѕРµРєС‚
+                </Link>
+              </li>
+              <li>
+                <Link href="/rules" className="text-sm hover:text-white transition-colors">
+                  РџСЂР°РІРёР»Р°
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="text-sm hover:text-white transition-colors">
+                  РљРѕРЅС„С–РґРµРЅС†С–Р№РЅС–СЃС‚СЊ
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="text-sm hover:text-white transition-colors">
+                  РЈРјРѕРІРё РІРёРєРѕСЂРёСЃС‚Р°РЅРЅСЏ
+                </Link>
+              </li>
             </ul>
           </div>
 
+          {/* РљРѕРЅС‚Р°РєС‚Рё */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Допомога</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/about" className="hover:text-white">Про нас</Link></li>
-              <li><Link href="/faq" className="hover:text-white">FAQ</Link></li>
-              <li><Link href="/contact" className="hover:text-white">Контакти</Link></li>
-              <li><Link href="/support" className="hover:text-white">Підтримка</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-white font-semibold mb-4">Правова інформація</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/terms" className="hover:text-white">Умови використання</Link></li>
-              <li><Link href="/privacy" className="hover:text-white">Політика конфіденційності</Link></li>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
+              РљРѕРЅС‚Р°РєС‚Рё
+            </h3>
+            <ul className="space-y-2">
+              <li className="flex items-center space-x-2 text-sm">
+                <Mail className="h-4 w-4" />
+                <span>info@nk-ecity.com</span>
+              </li>
+              <li className="flex items-center space-x-2 text-sm">
+                <Phone className="h-4 w-4" />
+                <span>+380 XX XXX XX XX</span>
+              </li>
+              <li className="flex items-center space-x-2 text-sm">
+                <MapPin className="h-4 w-4" />
+                <span>РќРѕРІР° РљР°С…РѕРІРєР°, РЈРєСЂР°С—РЅР°</span>
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-sm text-center">
-          <p>&copy; {new Date().getFullYear()} Nova Kakhovka e-City. Всі права захищені.</p>
+        {/* Copyright */}
+        <div className="mt-8 pt-8 border-t border-gray-800">
+          <p className="text-sm text-center text-gray-400">
+            В© {new Date().getFullYear()} Nova Kakhovka e-City. Р’СЃС– РїСЂР°РІР° Р·Р°С…РёС‰РµРЅС–.
+          </p>
         </div>
       </div>
     </footer>

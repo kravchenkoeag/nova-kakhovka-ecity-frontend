@@ -5,7 +5,7 @@
 import { useSession } from 'next-auth/react';
 
 /**
- * Хук для отримання токена
+ * РҐСѓРє РґР»СЏ РѕС‚СЂРёРјР°РЅРЅСЏ С‚РѕРєРµРЅР°
  */
 export function useAccessToken() {
   const { data: session } = useSession();
@@ -13,7 +13,7 @@ export function useAccessToken() {
 }
 
 /**
- * Хук для перевірки ролі модератора
+ * РҐСѓРє РґР»СЏ РїРµСЂРµРІС–СЂРєРё СЂРѕР»С– РјРѕРґРµСЂР°С‚РѕСЂР°
  */
 export function useIsModerator() {
   const { data: session } = useSession();
@@ -21,7 +21,7 @@ export function useIsModerator() {
 }
 
 /**
- * Хук для отримання ID користувача
+ * РҐСѓРє РґР»СЏ РѕС‚СЂРёРјР°РЅРЅСЏ ID РєРѕСЂРёСЃС‚СѓРІР°С‡Р°
  */
 export function useUserId() {
   const { data: session } = useSession();

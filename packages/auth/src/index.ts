@@ -17,3 +17,6 @@ export {
   useIsModerator,
   useUserId,
 } from './hooks';
+
+// Експортуємо types для TypeScript
+export type {} from './types';

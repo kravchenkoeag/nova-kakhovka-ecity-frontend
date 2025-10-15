@@ -5,18 +5,22 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Button, Input, Label } from '@ecity/ui';
+import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import { Button, Input, Card } from '@ecity/ui';
 
+/**
+ * РЎС‚РѕСЂС–РЅРєР° Р»РѕРіС–РЅСѓ РґР»СЏ РєРѕСЂРёСЃС‚СѓРІР°С‡С–РІ
+ */
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,130 +35,107 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError('Невірний email або пароль');
+        setError('РќРµРІС–СЂРЅРёР№ email Р°Р±Рѕ РїР°СЂРѕР»СЊ');
+        setIsLoading(false);
         return;
       }
 
       router.push(callbackUrl);
       router.refresh();
     } catch (err) {
-      setError('Сталася помилка. Спробуйте ще раз.');
-    } finally {
+      setError('Р’РёРЅРёРєР»Р° РїРѕРјРёР»РєР° РїСЂРё РІС…РѕРґС–');
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white px-4">
-      <Card className="w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Реєстрація
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Створіть акаунт в Nova Kakhovka e-City
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">{error}</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full">
+        <div className="bg-white rounded-lg shadow-xl p-8">
+          {/* Р›РѕРіРѕС‚РёРї */}
+          <div className="text-center mb-8">
+            <div className="mx-auto h-16 w-16 rounded-lg bg-primary flex items-center justify-center">
+              <span className="text-2xl font-bold text-white">NK</span>
             </div>
-          )}
+            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+              Nova Kakhovka e-City
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Р’С…С–Рґ РґРѕ РїР»Р°С‚С„РѕСЂРјРё
+            </p>
+          </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Р¤РѕСЂРјР° */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="rounded-md bg-red-50 p-4">
+                <div className="flex">
+                  <AlertCircle className="h-5 w-5 text-red-400" />
+                  <div className="ml-3">
+                    <p className="text-sm text-red-800">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Ім'я
-              </label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                value={formData.firstName}
-                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                placeholder="Іван"
+                id="email"
+                type="email"
+                autoComplete="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1"
+                placeholder="your@email.com"
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Прізвище
-              </label>
+              <Label htmlFor="password">РџР°СЂРѕР»СЊ</Label>
               <Input
-                value={formData.lastName}
-                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                placeholder="Іванов"
+                id="password"
+                type="password"
+                autoComplete="current-password"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1"
+                placeholder="вЂўвЂўвЂўвЂўвЂўвЂўвЂўвЂў"
               />
             </div>
+
+            <div className="flex items-center justify-between">
+              <div className="text-sm">
+                <Link
+                  href="/forgot-password"
+                  className="font-medium text-primary hover:text-primary/80"
+                >
+                  Р—Р°Р±СѓР»Рё РїР°СЂРѕР»СЊ?
+                </Link>
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Р’С…С–Рґ...' : 'РЈРІС–Р№С‚Рё'}
+            </Button>
+          </form>
+
+          {/* Р РµС”СЃС‚СЂР°С†С–СЏ */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Р©Рµ РЅРµРјР°С” Р°РєР°СѓРЅС‚Сѓ?{' '}
+              <Link
+                href="/register"
+                className="font-medium text-primary hover:text-primary/80"
+              >
+                Р—Р°СЂРµС”СЃС‚СЂСѓРІР°С‚РёСЃСЏ
+              </Link>
+            </p>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <Input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="your@email.com"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Телефон (опційно)
-            </label>
-            <Input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="+380501234567"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Пароль
-            </label>
-            <Input
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              placeholder="••••••••"
-              required
-              minLength={6}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Підтвердження паролю
-            </label>
-            <Input
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              placeholder="••••••••"
-              required
-              minLength={6}
-            />
-          </div>
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Реєстрація...' : 'Зареєструватися'}
-          </Button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Вже є акаунт?{' '}
-            <Link href="/login" className="text-blue-600 hover:underline font-medium">
-              Увійти
-            </Link>
-          </p>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

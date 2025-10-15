@@ -1,12 +1,30 @@
 // apps/admin/middleware.ts
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-import { adminMiddleware } from '@ecity/auth';
+export async function middleware(request: NextRequest) {
+  const token = await getToken({ 
+    req: request, 
+    secret: process.env.NEXTAUTH_SECRET 
+  });
 
-export { adminMiddleware as middleware };
+  // Перевірка авторизації
+  if (!token) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  // Перевірка ролі модератора для адмін панелі
+  if (!token.is_moderator) {
+    return NextResponse.redirect(new URL('/unauthorized', request.url));
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
     '/dashboard/:path*',
-    '/api/protected/:path*',
+    '/api/admin/:path*',
   ],
 };

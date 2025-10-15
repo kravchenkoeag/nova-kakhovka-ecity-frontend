@@ -1,5 +1,20 @@
 // packages/api-client/src/index.ts
 
+import { ApiClient } from './client';
+import { AuthApi } from './endpoints/auth';
+import { GroupsApi } from './endpoints/groups';
+import { EventsApi } from './endpoints/events';
+import { AnnouncementsApi } from './endpoints/announcements';
+import { PetitionsApi } from './endpoints/petitions';
+import { PollsApi } from './endpoints/polls';
+import { CityIssuesApi } from './endpoints/cityIssues';
+import { TransportApi } from './endpoints/transport';
+import { NotificationsApi } from './endpoints/notifications';
+
+/**
+ * Головний клієнт API для Nova Kakhovka e-City
+ * Об'єднує всі ендпоінти в один зручний інтерфейс
+ */
 export class EcityApiClient {
   public auth: AuthApi;
   public groups: GroupsApi;
@@ -14,6 +29,7 @@ export class EcityApiClient {
   constructor(baseUrl: string) {
     const client = new ApiClient(baseUrl);
 
+    // Ініціалізація всіх API модулів
     this.auth = new AuthApi(client);
     this.groups = new GroupsApi(client);
     this.events = new EventsApi(client);
@@ -26,11 +42,17 @@ export class EcityApiClient {
   }
 }
 
-// Singleton instance
+/**
+ * Фабрика для створення екземпляра API клієнта
+ * @param baseUrl - базова URL backend API
+ * @returns екземпляр EcityApiClient
+ */
 export const createApiClient = (baseUrl: string) => {
   return new EcityApiClient(baseUrl);
 };
 
+// Експорт всіх модулів
+export { ApiClient } from './client';
 export * from './endpoints/auth';
 export * from './endpoints/groups';
 export * from './endpoints/events';

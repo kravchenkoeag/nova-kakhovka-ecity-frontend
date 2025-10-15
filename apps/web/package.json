@@ -1,98 +1,43 @@
-// apps/web/package.json
-
 {
   "name": "web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3000",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next"
   },
   "dependencies": {
     "@ecity/auth": "workspace:*",
     "@ecity/api-client": "workspace:*",
     "@ecity/types": "workspace:*",
     "@ecity/ui": "workspace:*",
-    "@tanstack/react-query": "^5.0.0",
+    "@tanstack/react-query": "^5.28.0",
     "next": "14.2.0",
-    "next-auth": "^4.24.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
+    "next-auth": "^4.24.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "lucide-react": "^0.400.0",
-    "date-fns": "^3.0.0",
-    "leaflet": "^1.9.4"
+    "date-fns": "^3.3.1",
+    "react-hook-form": "^7.51.0",
+    "zod": "^3.22.4",
+    "@hookform/resolvers": "^3.3.4",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
+    "@types/node": "^20.11.19",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "@types/leaflet": "^1.9.8",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.3",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.0"
   }
-} className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Вітаємо!
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Увійдіть до Nova Kakhovka e-City
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
-          )}
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Пароль
-            </label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Вхід...' : 'Увійти'}
-          </Button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Ще немає акаунту?{' '}
-            <Link href="/register" className="text-blue-600 hover:underline font-medium">
-              Зареєструватися
-            </Link>
-          </p>
-        </div>
-      </Card>
-    </div>
-  );
 }

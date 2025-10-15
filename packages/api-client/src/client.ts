@@ -1,27 +1,19 @@
 // packages/api-client/src/client.ts
 
-import type {
-  User,
-  Group,
-  Event,
-  Announcement,
-  Petition,
-  Poll,
-  CityIssue,
-  TransportRoute,
-  TransportVehicle,
-  Notification,
-  Message,
-  AuthResponse,
-  PaginatedResponse,
-  ApiError,
-} from '@ecity/types';
+import type { ApiError } from '@ecity/types';
 
+/**
+ * Конфігурація для запиту до API
+ */
 interface RequestConfig extends RequestInit {
   token?: string;
 }
 
-class ApiClient {
+/**
+ * Базовий клієнт для взаємодії з backend API
+ * Підтримує GET, POST, PUT, DELETE, PATCH методи з автоматичною авторизацією
+ */
+export class ApiClient {
   private baseUrl: string;
   private defaultHeaders: HeadersInit;
 
@@ -32,6 +24,9 @@ class ApiClient {
     };
   }
 
+  /**
+   * Виконує HTTP запит до API
+   */
   private async request<T>(
     endpoint: string,
     config: RequestConfig = {}
@@ -47,19 +42,24 @@ class ApiClient {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      ...fetchConfig,
-      headers,
-    });
+    try {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        ...fetchConfig,
+        headers,
+      });
 
-    if (!response.ok) {
-      const error: ApiError = await response.json().catch(() => ({
-        error: `HTTP Error ${response.status}`,
-      }));
-      throw new Error(error.error || `Request failed: ${response.status}`);
+      if (!response.ok) {
+        const error: ApiError = await response.json().catch(() => ({
+          error: `HTTP Error ${response.status}`,
+        }));
+        throw new Error(error.error || `Request failed: ${response.status}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('API Request Error:', error);
+      throw error;
     }
-
-    return response.json();
   }
 
   async get<T>(endpoint: string, token?: string): Promise<T> {
@@ -84,5 +84,13 @@ class ApiClient {
 
   async delete<T>(endpoint: string, token?: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE', token });
+  }
+
+  async patch<T>(endpoint: string, data?: any, token?: string): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PATCH',
+      body: data ? JSON.stringify(data) : undefined,
+      token,
+    });
   }
 }

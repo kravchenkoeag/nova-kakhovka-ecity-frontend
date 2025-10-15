@@ -2,112 +2,171 @@
 
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { createApiClient } from '@ecity/api-client';
-import { useAccessToken } from '@ecity/auth';
-import { DataTable } from '@/components/tables/data-table';
-import { Button, Badge } from '@ecity/ui';
 import { useState } from 'react';
+import { useUsers, useBlockUser } from '@/hooks/useUsers';
+import { Button } from '@ecity/ui';
+import { Search, UserX, UserCheck } from 'lucide-react';
+import Link from 'next/link';
 
-const apiClient = createApiClient(process.env.NEXT_PUBLIC_API_URL!);
-
+// РЎС‚РѕСЂС–РЅРєР° СѓРїСЂР°РІР»С–РЅРЅСЏ РєРѕСЂРёСЃС‚СѓРІР°С‡Р°РјРё
 export default function UsersPage() {
-  const token = useAccessToken();
-  const [page, setPage] = useState(1);
+  const { data: users, isLoading } = useUsers();
+  const blockUser = useBlockUser();
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['users', page],
-    queryFn: async () => {
-      // В реальності тут буде запит до API
-      return {
-        users: [],
-        pagination: {
-          page: 1,
-          limit: 20,
-          total: 0,
-          total_pages: 0,
-        },
-      };
-    },
-    enabled: !!token,
-  });
+  const filteredUsers = users?.data?.filter((user: any) =>
+    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const columns = [
-    {
-      key: 'id',
-      label: 'ID',
-    },
-    {
-      key: 'name',
-      label: "Ім'я",
-      render: (user: any) => (
-        <div>
-          <div className="font-medium">{user.first_name} {user.last_name}</div>
-          <div className="text-sm text-gray-500">{user.email}</div>
-        </div>
-      ),
-    },
-    {
-      key: 'status',
-      label: 'Статус',
-      render: (user: any) => (
-        <Badge variant={user.is_verified ? 'success' : 'warning'}>
-          {user.is_verified ? 'Верифікований' : 'Не верифікований'}
-        </Badge>
-      ),
-    },
-    {
-      key: 'role',
-      label: 'Роль',
-      render: (user: any) => (
-        <Badge variant={user.is_moderator ? 'info' : 'default'}>
-          {user.is_moderator ? 'Модератор' : 'Користувач'}
-        </Badge>
-      ),
-    },
-    {
-      key: 'actions',
-      label: 'Дії',
-      render: (user: any) => (
-        <div className="flex gap-2">
-          <Button size="sm" variant="outline">
-            Переглянути
-          </Button>
-          <Button size="sm" variant="outline">
-            Редагувати
-          </Button>
-        </div>
-      ),
-    },
-  ];
+  const handleBlockToggle = async (userId: string, currentlyBlocked: boolean) => {
+    try {
+      await blockUser.mutateAsync({ userId, block: !currentlyBlocked });
+    } catch (error) {
+      console.error('Error toggling user block:', error);
+    }
+  };
 
   if (isLoading) {
-    return <div className="p-6">Завантаження...</div>;
-  }
-
-  if (error) {
-    return <div className="p-6 text-red-600">Помилка завантаження даних</div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      {/* Р—Р°РіРѕР»РѕРІРѕРє С‚Р° РїРѕС€СѓРє */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Користувачі</h1>
-          <p className="text-gray-600 mt-1">
-            Управління користувачами системи
+          <h1 className="text-3xl font-bold text-gray-900">РљРѕСЂРёСЃС‚СѓРІР°С‡С–</h1>
+          <p className="mt-2 text-sm text-gray-600">
+            РЈРїСЂР°РІР»С–РЅРЅСЏ РєРѕСЂРёСЃС‚СѓРІР°С‡Р°РјРё РїР»Р°С‚С„РѕСЂРјРё
           </p>
         </div>
-        <Button>Додати користувача</Button>
       </div>
 
-      <div className="bg-white rounded-lg shadow">
-        <DataTable
-          columns={columns}
-          data={data?.users || []}
-          pagination={data?.pagination}
-          onPageChange={setPage}
-        />
+      {/* РџРѕС€СѓРє */}
+      <div className="flex items-center space-x-4">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <input
+            type="text"
+            placeholder="РџРѕС€СѓРє Р·Р° email Р°Р±Рѕ С–Рј'СЏРј..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+          />
+        </div>
+      </div>
+
+      {/* РўР°Р±Р»РёС†СЏ РєРѕСЂРёСЃС‚СѓРІР°С‡С–РІ */}
+      <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                РљРѕСЂРёСЃС‚СѓРІР°С‡
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Email
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                РўРµР»РµС„РѕРЅ
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                РЎС‚Р°С‚СѓСЃ
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Р”Р°С‚Р° СЂРµС”СЃС‚СЂР°С†С–С—
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Р”С–С—
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredUsers?.map((user: any) => (
+              <tr key={user.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center font-medium">
+                      {user.first_name?.[0]}{user.last_name?.[0]}
+                    </div>
+                    <div className="ml-4">
+                      <div className="text-sm font-medium text-gray-900">
+                        {user.first_name} {user.last_name}
+                      </div>
+                      {user.is_moderator && (
+                        <div className="text-xs text-blue-600">РњРѕРґРµСЂР°С‚РѕСЂ</div>
+                      )}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {user.email}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {user.phone || 'вЂ”'}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span
+                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      user.is_blocked
+                        ? 'bg-red-100 text-red-800'
+                        : user.is_verified
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}
+                  >
+                    {user.is_blocked
+                      ? 'Р—Р°Р±Р»РѕРєРѕРІР°РЅРёР№'
+                      : user.is_verified
+                      ? 'Р’РµСЂРёС„С–РєРѕРІР°РЅРёР№'
+                      : 'РђРєС‚РёРІРЅРёР№'}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(user.created_at).toLocaleDateString('uk-UA')}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div className="flex items-center justify-end space-x-2">
+                    <Link href={`/dashboard/users/${user.id}`}>
+                      <Button variant="ghost" size="sm">
+                        РџРµСЂРµРіР»СЏРЅСѓС‚Рё
+                      </Button>
+                    </Link>
+                    <Button
+                      variant={user.is_blocked ? 'default' : 'destructive'}
+                      size="sm"
+                      onClick={() => handleBlockToggle(user.id, user.is_blocked)}
+                      disabled={blockUser.isPending}
+                    >
+                      {user.is_blocked ? (
+                        <>
+                          <UserCheck className="h-4 w-4 mr-1" />
+                          Р РѕР·Р±Р»РѕРєСѓРІР°С‚Рё
+                        </>
+                      ) : (
+                        <>
+                          <UserX className="h-4 w-4 mr-1" />
+                          Р—Р°Р±Р»РѕРєСѓРІР°С‚Рё
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {filteredUsers?.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">РљРѕСЂРёСЃС‚СѓРІР°С‡С–РІ РЅРµ Р·РЅР°Р№РґРµРЅРѕ</p>
+          </div>
+        )}
       </div>
     </div>
   );

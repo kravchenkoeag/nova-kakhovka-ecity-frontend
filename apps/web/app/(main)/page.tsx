@@ -1,90 +1,100 @@
 // apps/web/app/(main)/page.tsx
 
+import { Button } from '@ecity/ui';
 import Link from 'next/link';
-import { Button, Card } from '@ecity/ui';
-import { 
-  MessageSquare, 
-  Calendar, 
-  Megaphone, 
-  FileText, 
-  BarChart3, 
-  AlertCircle 
+import {
+  MessageSquare,
+  Calendar,
+  Megaphone,
+  FileText,
+  MapPin,
+  Bus,
+  Users,
+  TrendingUp,
 } from 'lucide-react';
 
+/**
+ * Р“РѕР»РѕРІРЅР° СЃС‚РѕСЂС–РЅРєР° РІРµР±-РґРѕРґР°С‚РєСѓ
+ */
 export default function HomePage() {
   const features = [
     {
+      name: 'Р“СЂСѓРїРё С‚Р° С‡Р°С‚Рё',
+      description: 'РЎРїС–Р»РєСѓР№С‚РµСЃСЊ Р· РјРµС€РєР°РЅС†СЏРјРё Р·Р° С–РЅС‚РµСЂРµСЃР°РјРё С‚Р° Р»РѕРєР°С†С–С”СЋ',
       icon: MessageSquare,
-      title: 'Групи та чати',
-      description: 'Спілкуйтесь з мешканцями вашого району',
       href: '/groups',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      color: 'bg-blue-500',
     },
     {
+      name: 'РџРѕРґС–С—',
+      description: 'Р”С–Р·РЅР°РІР°Р№С‚РµСЃСЊ РїСЂРѕ РєСѓР»СЊС‚СѓСЂРЅС– С‚Р° СЃРѕС†С–Р°Р»СЊРЅС– Р·Р°С…РѕРґРё',
       icon: Calendar,
-      title: 'Події',
-      description: 'Дізнавайтесь про події в місті',
       href: '/events',
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
+      color: 'bg-purple-500',
     },
     {
+      name: 'РћРіРѕР»РѕС€РµРЅРЅСЏ',
+      description: 'Р РѕР·РјС–С‰СѓР№С‚Рµ С‚Р° С€СѓРєР°Р№С‚Рµ РїРѕС‚СЂС–Р±РЅС– РїРѕСЃР»СѓРіРё',
       icon: Megaphone,
-      title: 'Оголошення',
-      description: 'Розміщуйте та переглядайте оголошення',
       href: '/announcements',
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
+      color: 'bg-green-500',
     },
     {
+      name: 'РџРµС‚РёС†С–С—',
+      description: 'Р’РїР»РёРІР°Р№С‚Рµ РЅР° СЂС–С€РµРЅРЅСЏ РјС–СЃСЊРєРѕС— РІР»Р°РґРё',
       icon: FileText,
-      title: 'Петиції',
-      description: 'Створюйте та підписуйте петиції',
       href: '/petitions',
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
+      color: 'bg-red-500',
     },
     {
-      icon: BarChart3,
-      title: 'Опитування',
-      description: 'Беріть участь в опитуваннях міста',
-      href: '/polls',
-      color: 'text-pink-600',
-      bgColor: 'bg-pink-50',
-    },
-    {
-      icon: AlertCircle,
-      title: 'Проблеми міста',
-      description: 'Повідомляйте про проблеми в місті',
+      name: 'РџСЂРѕР±Р»РµРјРё РјС–СЃС‚Р°',
+      description: 'РџРѕРІС–РґРѕРјР»СЏР№С‚Рµ РїСЂРѕ РїСЂРѕР±Р»РµРјРё С–РЅС„СЂР°СЃС‚СЂСѓРєС‚СѓСЂРё',
+      icon: MapPin,
       href: '/city-issues',
-      color: 'text-red-600',
-      bgColor: 'bg-red-50',
+      color: 'bg-orange-500',
     },
+    {
+      name: 'РўСЂР°РЅСЃРїРѕСЂС‚',
+      description: 'Р’С–РґСЃС‚РµР¶СѓР№С‚Рµ РіСЂРѕРјР°РґСЃСЊРєРёР№ С‚СЂР°РЅСЃРїРѕСЂС‚ РѕРЅР»Р°Р№РЅ',
+      icon: Bus,
+      href: '/transport',
+      color: 'bg-indigo-500',
+    },
+  ];
+
+  const stats = [
+    { label: 'РђРєС‚РёРІРЅРёС… РєРѕСЂРёСЃС‚СѓРІР°С‡С–РІ', value: '1,248', icon: Users },
+    { label: 'РЎС‚РІРѕСЂРµРЅРѕ РіСЂСѓРї', value: '45', icon: MessageSquare },
+    { label: 'Р—Р°РїР»Р°РЅРѕРІР°РЅРѕ РїРѕРґС–Р№', value: '23', icon: Calendar },
+    { label: 'Р’РёСЂС–С€РµРЅРѕ РїСЂРѕР±Р»РµРј', value: '156', icon: TrendingUp },
   ];
 
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-6">
+      <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="text-center">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">
               Nova Kakhovka e-City
             </h1>
-            <p className="text-xl mb-8 text-blue-100">
-              Цифрова платформа для покращення життя в нашому місті. 
-              Спілкуйтесь, беріть участь в житті громади та впливайте на розвиток міста.
+            <p className="mt-6 text-xl sm:text-2xl text-blue-100 max-w-3xl mx-auto">
+              Р•Р»РµРєС‚СЂРѕРЅРЅР° РїР»Р°С‚С„РѕСЂРјР° РґР»СЏ РіСЂРѕРјР°РґРё. 
+              РћР±'С”РґРЅСѓС”РјРѕ РјРµС€РєР°РЅС†С–РІ, РІРёСЂС–С€СѓС”РјРѕ РїСЂРѕР±Р»РµРјРё СЂР°Р·РѕРј.
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="mt-10 flex justify-center space-x-4">
               <Link href="/register">
-                <Button size="lg" variant="secondary">
-                  Приєднатися
+                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
+                  РџСЂРёС”РґРЅР°С‚РёСЃСЏ
                 </Button>
               </Link>
-              <Link href="/events">
-                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
-                  Дізнатися більше
+              <Link href="/about">
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="border-white text-white hover:bg-white/10"
+                >
+                  Р”С–Р·РЅР°С‚РёСЃСЊ Р±С–Р»СЊС€Рµ
                 </Button>
               </Link>
             </div>
@@ -92,55 +102,81 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Grid */}
+      {/* Stats */}
+      <section className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="flex justify-center mb-2">
+                  <stat.icon className="h-8 w-8 text-primary" />
+                </div>
+                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-sm text-gray-600 mt-1">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
       <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Можливості платформи
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              РњРѕР¶Р»РёРІРѕСЃС‚С– РїР»Р°С‚С„РѕСЂРјРё
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Все, що потрібно для активної участі в житті міста, в одному місці
+            <p className="mt-4 text-xl text-gray-600">
+              Р’СЃРµ РЅРµРѕР±С…С–РґРЅРµ РґР»СЏ Р°РєС‚РёРІРЅРѕС— СѓС‡Р°СЃС‚С– РІ Р¶РёС‚С‚С– РјС–СЃС‚Р°
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {features.map((feature) => {
-              const Icon = feature.icon;
-              return (
-                <Link key={feature.href} href={feature.href}>
-                  <Card className="p-6 h-full hover:shadow-lg transition-shadow cursor-pointer">
-                    <div className={`w-12 h-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-4`}>
-                      <Icon className={`w-6 h-6 ${feature.color}`} />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2 text-gray-900">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-600">
-                      {feature.description}
-                    </p>
-                  </Card>
-                </Link>
-              );
-            })}
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature) => (
+              <Link
+                key={feature.name}
+                href={feature.href}
+                className="group relative bg-white rounded-lg shadow-sm hover:shadow-lg transition-all overflow-hidden"
+              >
+                <div className="p-6">
+                  <div className={`inline-flex p-3 rounded-lg ${feature.color}`}>
+                    <feature.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors">
+                    {feature.name}
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-600">
+                    {feature.description}
+                  </p>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Готові почати?
-          </h2>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Приєднуйтесь до нашої спільноти та робіть місто кращим разом з нами
-          </p>
-          <Link href="/register">
-            <Button size="lg">
-              Зареєструватися безкоштовно
-            </Button>
-          </Link>
+      <section className="bg-primary text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold sm:text-4xl">
+              Р“РѕС‚РѕРІС– РїСЂРёС”РґРЅР°С‚РёСЃСЏ?
+            </h2>
+            <p className="mt-4 text-xl text-blue-100">
+              РџСЂРёС”РґРЅСѓР№С‚РµСЃСЊ РґРѕ РЅР°С€РѕС— СЃРїС–Р»СЊРЅРѕС‚Рё С‚Р° СЂРѕР±С–С‚СЊ РјС–СЃС‚Рѕ РєСЂР°С‰РёРј СЂР°Р·РѕРј Р· РЅР°РјРё
+            </p>
+            <div className="mt-8">
+              <Link href="/register">
+                <Button 
+                  size="lg" 
+                  className="bg-white text-primary hover:bg-blue-50"
+                >
+                  Р—Р°СЂРµС”СЃС‚СЂСѓРІР°С‚РёСЃСЏ Р·Р°СЂР°Р·
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>

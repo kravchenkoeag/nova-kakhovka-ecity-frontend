@@ -1,33 +1,51 @@
-```json
 {
-  "name": "nova-kakhovka-ecity-frontend",
+ "name": "nova-kakhovka-ecity-frontend",
+  "version": "1.0.0",
   "private": true,
+  "description": "Nova Kakhovka e-City - Frontend Monorepo",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
-  "scripts": {
+  "homepage": "https://github.com/your-org/nova-kakhovka-ecity-frontend",
+  "bugs": {
+    "url": "https://github.com/your-org/nova-kakhovka-ecity-frontend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/nova-kakhovka-ecity-frontend.git"
+  },
+  "license": "MIT",
+  "author": "Nova Kakhovka Development Team",
+    "scripts": {
     "dev": "turbo run dev",
     "dev:admin": "turbo run dev --filter=admin",
     "dev:web": "turbo run dev --filter=web",
     "build": "turbo run build",
     "build:admin": "turbo run build --filter=admin",
     "build:web": "turbo run build --filter=web",
+    "start:admin": "turbo run start --filter=admin",
+    "start:web": "turbo run start --filter=web",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint:admin": "turbo run lint --filter=admin",
+    "lint:web": "turbo run lint --filter=web",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
     "type-check": "turbo run type-check",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "clean:all": "turbo run clean && rm -rf node_modules **/node_modules **/.next **/dist"
   },
   "devDependencies": {
-    "turbo": "^2.0.0",
-    "prettier": "^3.0.0",
-    "@types/node": "^20.0.0",
-    "typescript": "^5.3.0"
+    "turbo": "^2.0.12",
+    "prettier": "^3.2.5",
+    "@types/node": "^20.11.19",
+    "typescript": "^5.3.3",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.0"
   },
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@8.15.0"
+  "packageManager": "pnpm@8.15.4"
 }
-```
