@@ -25,6 +25,8 @@ lerna-debug.log*
 .env
 .env*.local
 .env.production.local
+apps/admin/.env.local
+apps/web/.env.local
 !.env.example
 
 # Vercel
