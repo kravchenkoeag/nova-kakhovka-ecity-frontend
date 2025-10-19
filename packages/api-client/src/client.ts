@@ -1,6 +1,7 @@
 // packages/api-client/src/client.ts
 
-import type { ApiError } from '@ecity/types';
+import type { ApiError } from "@ecity/types";
+import { handleFetchError, isUnauthorizedError } from "./interceptors";
 
 interface RequestConfig extends RequestInit {
   token?: string;
@@ -14,7 +15,7 @@ export class ApiClient {
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
     this.defaultHeaders = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
   }
 
@@ -27,13 +28,13 @@ export class ApiClient {
 
     // Створюємо об'єкт headers
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(config.headers as Record<string, string>),
     };
 
     // Додаємо токен авторизації якщо він переданий
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
     }
 
     try {
@@ -44,6 +45,11 @@ export class ApiClient {
 
       // Обробка помилок HTTP
       if (!response.ok) {
+        // Special handling for 401 errors
+        if (response.status === 401) {
+          await handleFetchError(response);
+        }
+
         const error: ApiError = await response.json().catch(() => ({
           error: `HTTP Error ${response.status}`,
         }));
@@ -53,20 +59,27 @@ export class ApiClient {
       // Парсимо JSON відповідь
       return response.json();
     } catch (error) {
-      console.error('API Request Error:', error);
+      console.error("API Request Error:", error);
+
+      // Handle 401 errors specifically
+      if (isUnauthorizedError(error)) {
+        // The error will be handled by the interceptor
+        throw error;
+      }
+
       throw error;
     }
   }
 
   // GET запит
   async get<T>(endpoint: string, token?: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'GET', token });
+    return this.request<T>(endpoint, { method: "GET", token });
   }
 
   // POST запит
   async post<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
-      method: 'POST',
+      method: "POST",
       body: data ? JSON.stringify(data) : undefined,
       token,
     });
@@ -75,7 +88,7 @@ export class ApiClient {
   // PUT запит
   async put<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
-      method: 'PUT',
+      method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
       token,
     });
@@ -83,13 +96,13 @@ export class ApiClient {
 
   // DELETE запит
   async delete<T>(endpoint: string, token?: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'DELETE', token });
+    return this.request<T>(endpoint, { method: "DELETE", token });
   }
 
   // PATCH запит
   async patch<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
-      method: 'PATCH',
+      method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
       token,
     });

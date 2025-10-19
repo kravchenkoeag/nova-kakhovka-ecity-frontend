@@ -1,16 +1,20 @@
 // packages/auth/src/types.ts
 
-import 'next-auth';
-import 'next-auth/jwt';
+import "next-auth";
+import "next-auth/jwt";
+import { UserRole, Permission } from "@ecity/types";
 
 // Розширюємо типи NextAuth для наших кастомних полів
-declare module 'next-auth' {
+declare module "next-auth" {
   interface User {
     id: string;
     email: string;
     name: string;
     accessToken: string;
-    isModerator: boolean;
+    role: UserRole;
+    permissions: Permission[];
+    // Legacy field for backward compatibility
+    isModerator?: boolean;
   }
 
   interface Session {
@@ -19,15 +23,21 @@ declare module 'next-auth' {
       email: string;
       name: string;
       accessToken: string;
-      isModerator: boolean;
+      role: UserRole;
+      permissions: Permission[];
+      // Legacy field for backward compatibility
+      isModerator?: boolean;
     };
   }
 }
 
-declare module 'next-auth/jwt' {
+declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     accessToken: string;
-    isModerator: boolean;
+    role: UserRole;
+    permissions: Permission[];
+    // Legacy field for backward compatibility
+    isModerator?: boolean;
   }
 }

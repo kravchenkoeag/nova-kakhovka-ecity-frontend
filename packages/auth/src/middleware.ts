@@ -1,8 +1,9 @@
 // packages/auth/src/middleware.ts
 
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { UserRole } from "@ecity/types";
 
 export async function createAuthMiddleware(
   request: NextRequest,
@@ -30,14 +31,20 @@ export async function createAuthMiddleware(
 
   // Якщо немає токена - редірект на логін
   if (!token) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname);
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Перевіряємо права модератора
-  if (requireModerator && !token.is_moderator) {
-    return NextResponse.redirect(new URL('/unauthorized', request.url));
+  // Перевіряємо права модератора (legacy support)
+  if (
+    requireModerator &&
+    !token.is_moderator &&
+    token.role !== UserRole.MODERATOR &&
+    token.role !== UserRole.ADMIN &&
+    token.role !== UserRole.SUPER_ADMIN
+  ) {
+    return NextResponse.redirect(new URL("/unauthorized", request.url));
   }
 
   return NextResponse.next();
@@ -47,7 +54,7 @@ export async function createAuthMiddleware(
 export async function adminMiddleware(request: NextRequest) {
   return createAuthMiddleware(request, {
     requireModerator: true,
-    publicPaths: ['/login', '/api/auth'],
+    publicPaths: ["/login", "/api/auth"],
   });
 }
 
@@ -55,6 +62,6 @@ export async function adminMiddleware(request: NextRequest) {
 export async function webMiddleware(request: NextRequest) {
   return createAuthMiddleware(request, {
     requireModerator: false,
-    publicPaths: ['/login', '/register', '/api/auth', '/_next', '/favicon.ico'],
+    publicPaths: ["/login", "/register", "/api/auth", "/_next", "/favicon.ico"],
   });
 }

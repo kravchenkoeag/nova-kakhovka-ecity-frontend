@@ -1,19 +1,20 @@
 // apps/admin/app/(dashboard)/page.tsx
 
-import { Suspense } from 'react';
-import { Users, MessageSquare, Calendar, Megaphone } from 'lucide-react';
-import { StatsCard } from '@/components/dashboard/stats-card';
-import { AnalyticsChart } from '@/components/charts/analytics-chart';
-import { getSession } from '@ecity/auth';
-import { redirect } from 'next/navigation';
+import { Suspense } from "react";
+import { Users, MessageSquare, Calendar, Megaphone } from "lucide-react";
+import { StatsCard } from "@/components/dashboard/stats-card";
+import { AnalyticsChart } from "@/components/charts/analytics-chart";
+import { requireRole } from "@ecity/auth";
+import { UserRole } from "@ecity/types";
 
 // Головна сторінка dashboard - показує статистику та активність
 export default async function DashboardPage() {
-  const session = await getSession();
-
-  if (!session) {
-    redirect('/login');
-  }
+  // Require moderator or higher role
+  const session = await requireRole([
+    UserRole.MODERATOR,
+    UserRole.ADMIN,
+    UserRole.SUPER_ADMIN,
+  ]);
 
   // TODO: Отримати дані з API замість hardcoded
   const stats = {
@@ -68,7 +69,7 @@ export default async function DashboardPage() {
       {/* Графік активності */}
       <div className="bg-white rounded-lg border shadow-sm p-6">
         <h2 className="text-xl font-semibold mb-4">Активність користувачів</h2>
-       <AnalyticsChart />
+        <AnalyticsChart />
         <div className="h-64 flex items-center justify-center bg-gray-50 rounded">
           <p className="text-sm text-gray-500">
             Графік буде тут (використати Recharts)
@@ -82,21 +83,15 @@ export default async function DashboardPage() {
           <h2 className="text-lg font-semibold mb-4">Недавня активність</h2>
           <div className="space-y-4">
             {/* TODO: Список недавньої активності з API */}
-            <p className="text-sm text-gray-500">
-              Завантаження активності...
-            </p>
+            <p className="text-sm text-gray-500">Завантаження активності...</p>
           </div>
         </div>
 
         <div className="rounded-lg border bg-white p-6">
-          <h2 className="text-lg font-semibold mb-4">
-            Непрочитані сповіщення
-          </h2>
+          <h2 className="text-lg font-semibold mb-4">Непрочитані сповіщення</h2>
           <div className="space-y-4">
             {/* TODO: Список сповіщень з API */}
-            <p className="text-sm text-gray-500">
-              Немає нових сповіщень
-            </p>
+            <p className="text-sm text-gray-500">Немає нових сповіщень</p>
           </div>
         </div>
       </div>

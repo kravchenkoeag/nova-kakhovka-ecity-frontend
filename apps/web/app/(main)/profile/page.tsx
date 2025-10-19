@@ -1,19 +1,15 @@
 // apps/web/app/(main)/profile/page.tsx
 
-import { getSession } from '@ecity/auth';
-import { redirect } from 'next/navigation';
-import { Button } from '@ecity/ui';
-import { Mail, Phone, MapPin, Calendar, Edit } from 'lucide-react';
-import Link from 'next/link';
+import { requireAuth } from "@ecity/auth";
+import { Button } from "@ecity/ui";
+import { Mail, Phone, MapPin, Calendar, Edit } from "lucide-react";
+import Link from "next/link";
 
 // Сторінка профілю користувача
 
 export default async function ProfilePage() {
-  const session = await getSession();
-
-  if (!session) {
-    redirect('/login');
-  }
+  // Require authentication
+  const session = await requireAuth();
 
   // TODO: Отримати повні дані користувача з API
   const user = session.user;

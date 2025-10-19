@@ -10,7 +10,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@ecity/types": "workspace:*"
+    "@ecity/types": "workspace:*",
+    "next-auth": "^4.24.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

@@ -2,49 +2,46 @@
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { isWebPublicRoute } from "@ecity/auth";
 
 /**
  * Middleware для веб-додатку
- * Перевіряє авторизацію користувачів без використання Edge Runtime
- * для уникнення проблем з openid-client
+ * Перевіряє базову авторизацію для захищених маршрутів
  */
-export function middleware(request: NextRequest) {
-  // Список публічних шляхів, що не потребують авторизації
-  const publicPaths = [
-    "/login",
-    "/register",
-    "/api/auth",
-    "/_next",
-    "/favicon.ico",
-    "/",
-  ];
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
   // Перевіряємо чи це публічний шлях
-  const isPublicPath = publicPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
-
-  // Дозволяємо доступ до публічних шляхів
-  if (isPublicPath) {
+  if (isWebPublicRoute(pathname)) {
     return NextResponse.next();
   }
 
-  // Перевіряємо наявність токена NextAuth в cookies
-  // NextAuth зберігає токен в одному з цих cookies
-  const token =
-    request.cookies.get("next-auth.session-token") ||
-    request.cookies.get("__Secure-next-auth.session-token");
+  try {
+    // Отримуємо токен NextAuth
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
 
-  // Якщо немає токена - редірект на сторінку логіну
-  if (!token) {
+    // Якщо немає токена - редірект на сторінку логіну
+    if (!token) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Користувач авторизований - дозволяємо доступ
+    // Детальна перевірка дозволень відбувається на рівні сторінок
+    return NextResponse.next();
+  } catch (error) {
+    console.error("Web middleware error:", error);
+
+    // У разі помилки редіректимо на логін
     const loginUrl = new URL("/login", request.url);
-    // Зберігаємо URL для повернення після логіну
-    loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+    loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
-
-  // Користувач авторизований - дозволяємо доступ
-  return NextResponse.next();
 }
 
 /**

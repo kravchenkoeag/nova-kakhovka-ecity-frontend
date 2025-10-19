@@ -2,46 +2,53 @@
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { isAdminPublicRoute, AdminPanelRoles } from "@ecity/auth";
 
 /**
  * Middleware для адмін-панелі
- * Перевіряє авторизацію адміністраторів без використання Edge Runtime
- * для уникнення проблем з openid-client
- *
- * ВАЖЛИВО: Це базова перевірка наявності токена.
- * Перевірка прав модератора відбувається на рівні API та сторінок
+ * Перевіряє авторизацію та ролі для доступу до адмін панелі
  */
-export function middleware(request: NextRequest) {
-  // Список публічних шляхів, що не потребують авторизації
-  const publicPaths = ["/login", "/api/auth", "/_next", "/favicon.ico"];
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
   // Перевіряємо чи це публічний шлях
-  const isPublicPath = publicPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
-
-  // Дозволяємо доступ до публічних шляхів
-  if (isPublicPath) {
+  if (isAdminPublicRoute(pathname)) {
     return NextResponse.next();
   }
 
-  // Перевіряємо наявність токена NextAuth в cookies
-  // NextAuth зберігає токен в одному з цих cookies
-  const token =
-    request.cookies.get("next-auth.session-token") ||
-    request.cookies.get("__Secure-next-auth.session-token");
+  try {
+    // Отримуємо токен NextAuth
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
 
-  // Якщо немає токена - редірект на сторінку логіну
-  if (!token) {
+    // Якщо немає токена - редірект на сторінку логіну
+    if (!token) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Перевіряємо роль користувача
+    const userRole = token.role as string;
+
+    if (!userRole || !AdminPanelRoles.includes(userRole as any)) {
+      // Користувач не має права доступу до адмін панелі
+      return NextResponse.redirect(new URL("/unauthorized", request.url));
+    }
+
+    // Користувач має відповідну роль - дозволяємо доступ
+    return NextResponse.next();
+  } catch (error) {
+    console.error("Admin middleware error:", error);
+
+    // У разі помилки редіректимо на логін
     const loginUrl = new URL("/login", request.url);
-    // Зберігаємо URL для повернення після логіну
-    loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+    loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
-
-  // Користувач авторизований - дозволяємо доступ
-  // Перевірка прав модератора відбувається на рівні компонентів та API
-  return NextResponse.next();
 }
 
 /**
