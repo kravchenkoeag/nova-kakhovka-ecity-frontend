@@ -1,5 +1,4 @@
 // apps/admin/next.config.js
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Увімкнути React Strict Mode для виявлення потенційних проблем
@@ -36,18 +35,29 @@ const nextConfig = {
   // Експериментальні функції Next.js 14
   experimental: {
     // Оптимізація імпорту пакетів для зменшення bundle size
-    // recharts додано для графіків в адмін-панелі
     optimizePackageImports: ["@ecity/ui", "lucide-react", "recharts"],
 
-    // ВАЖЛИВО: Виключити next-auth з server components bundling
-    // Це вирішує проблему з openid-client в Edge Runtime
-    serverComponentsExternalPackages: ["next-auth", "openid-client"],
+    // КРИТИЧНО ВАЖЛИВО: Виключити next-auth та залежності з Edge Runtime
+    // Це вирішує проблему з openid-client в middleware
+    serverComponentsExternalPackages: [
+      "next-auth",
+      "@next-auth/core",
+      "next-auth/providers",
+      "openid-client",
+      "oauth4webapi",
+      "preact",
+      "preact-render-to-string",
+      "@panva/hkdf",
+      "jose",
+      "uuid",
+      "cookie",
+    ],
   },
 
   // Налаштування для production build
   output: "standalone", // для оптимізації Docker образів
 
-  // Webpack конфігурація (за потреби)
+  // Webpack конфігурація
   webpack: (config, { isServer }) => {
     // Виключити певні модулі з client bundle
     if (!isServer) {
@@ -56,8 +66,16 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
+        crypto: false,
+        stream: false,
+        http: false,
+        https: false,
+        zlib: false,
+        path: false,
+        os: false,
       };
     }
+
     return config;
   },
 };

@@ -1,9 +1,36 @@
 // apps/web/middleware.ts
-
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { isWebPublicRoute } from "@ecity/auth";
+
+/**
+ * Список публічних маршрутів для веб-додатку
+ */
+const PUBLIC_PATHS = [
+  "/",
+  "/login",
+  "/register",
+  "/about",
+  "/rules",
+  "/privacy",
+  "/terms",
+  "/api/auth",
+  "/_next",
+  "/favicon.ico",
+  "/unauthorized",
+];
+
+/**
+ * Перевіряє чи шлях є публічним
+ */
+function isPublicPath(pathname: string): boolean {
+  return PUBLIC_PATHS.some((path) => {
+    if (path === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(path);
+  });
+}
 
 /**
  * Middleware для веб-додатку
@@ -13,7 +40,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Перевіряємо чи це публічний шлях
-  if (isWebPublicRoute(pathname)) {
+  if (isPublicPath(pathname)) {
     return NextResponse.next();
   }
 
@@ -31,15 +58,26 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
+    // Додаємо заголовки з інформацією про користувача
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-user-id", token.id as string);
+    requestHeaders.set("x-user-role", (token.role as string) || "USER");
+    requestHeaders.set("x-user-email", token.email as string);
+
     // Користувач авторизований - дозволяємо доступ
     // Детальна перевірка дозволень відбувається на рівні сторінок
-    return NextResponse.next();
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   } catch (error) {
-    console.error("Web middleware error:", error);
+    console.error("[Web Middleware] Error:", error);
 
     // У разі помилки редіректимо на логін
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
+    loginUrl.searchParams.set("error", "AuthError");
     return NextResponse.redirect(loginUrl);
   }
 }

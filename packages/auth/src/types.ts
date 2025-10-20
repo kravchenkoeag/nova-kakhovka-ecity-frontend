@@ -10,6 +10,7 @@ declare module "next-auth" {
     id: string;
     email: string;
     name: string;
+    username: string; // Додано username
     accessToken: string;
     role: UserRole;
     permissions: Permission[];
@@ -22,6 +23,7 @@ declare module "next-auth" {
       id: string;
       email: string;
       name: string;
+      username: string; // Додано username
       accessToken: string;
       role: UserRole;
       permissions: Permission[];
@@ -35,6 +37,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     accessToken: string;
+    username: string; // Додано username
     role: UserRole;
     permissions: Permission[];
     // Legacy field for backward compatibility

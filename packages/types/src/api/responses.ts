@@ -1,10 +1,4 @@
 // packages/types/src/api/responses.ts
-import type { User } from '../models/user';
-
-export interface AuthResponse {
-  token: string;
-  user: User;
-}
 
 export interface PaginationMeta {
   page: number;
@@ -25,4 +19,20 @@ export interface ApiError {
 
 export interface SuccessResponse {
   message: string;
+}
+
+// Додаткові response типи можна додавати тут
+export interface MessageResponse {
+  message: string;
+  data?: any;
+}
+
+export interface ValidationError {
+  field: string;
+  message: string;
+}
+
+export interface ValidationErrorResponse {
+  error: string;
+  validation_errors: ValidationError[];
 }

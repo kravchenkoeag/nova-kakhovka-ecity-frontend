@@ -14,6 +14,9 @@ export * from "./models/notification";
 export * from "./models/message";
 export * from "./models/common";
 
+// Auth (має бути ПЕРЕД api/requests щоб не було конфліктів)
+export * from "./auth";
+
 // API
 export * from "./api/requests";
 export * from "./api/responses";
