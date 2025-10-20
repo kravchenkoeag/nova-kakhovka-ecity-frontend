@@ -9,6 +9,7 @@ import { UserRole } from "@ecity/types";
 
 // Головна сторінка dashboard - показує статистику та активність
 export default async function DashboardPage() {
+  // 🔒 КРИТИЧНО: Перевірка прав доступу - тільки модератори та вище
   // Require moderator or higher role
   const session = await requireRole([
     UserRole.MODERATOR,
@@ -30,41 +31,54 @@ export default async function DashboardPage() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Вітаємо, {session.user.name}! Огляд основних показників платформи
+          Вітаємо, {session.user.name}! Переглядайте статистику та керуйте
+          платформою.
         </p>
       </div>
 
-      {/* Статистика */}
+      {/* Статистичні картки */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Користувачі"
           value={stats.users.total}
-          description="Всього зареєстрованих"
-          icon={Users}
           trend={stats.users.trend}
+          icon={Users}
         />
         <StatsCard
           title="Групи"
           value={stats.groups.total}
-          description="Активні групи"
-          icon={MessageSquare}
           trend={stats.groups.trend}
+          icon={MessageSquare}
         />
         <StatsCard
           title="Події"
           value={stats.events.total}
-          description="Заплановані події"
-          icon={Calendar}
           trend={stats.events.trend}
+          icon={Calendar}
         />
         <StatsCard
           title="Оголошення"
           value={stats.announcements.total}
-          description="Активні оголошення"
-          icon={Megaphone}
           trend={stats.announcements.trend}
+          icon={Megaphone}
         />
       </div>
+
+      {/* Графіки аналітики
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Suspense fallback={<div className="h-96 bg-gray-100 rounded-lg animate-pulse" />}>
+          <AnalyticsChart
+            title="Активність користувачів"
+            description="Активні користувачі за останні 30 днів"
+          />
+        </Suspense>
+        <Suspense fallback={<div className="h-96 bg-gray-100 rounded-lg animate-pulse" />}>
+          <AnalyticsChart
+            title="Створення контенту"
+            description="Нові публікації за тиждень"
+          />
+        </Suspense>
+      </div> */}
 
       {/* Графік активності */}
       <div className="bg-white rounded-lg border shadow-sm p-6">
