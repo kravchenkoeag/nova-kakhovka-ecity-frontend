@@ -7,24 +7,46 @@ interface RequestConfig extends RequestInit {
   token?: string;
 }
 
-// Базовий клієнт для взаємодії з backend API
+/**
+ * Базовий клієнт для взаємодії з backend API
+ *
+ * Підтримує два режими роботи:
+ * 1. Direct mode - прямі запити до backend (за замовчуванням)
+ * 2. Proxy mode - запити через Next.js API proxy (безпечніше для токенів)
+ */
 export class ApiClient {
   private baseUrl: string;
   private defaultHeaders: HeadersInit;
+  private useProxy: boolean;
 
-  constructor(baseUrl: string) {
+  /**
+   * @param baseUrl - базова URL backend API
+   * @param useProxy - чи використовувати Next.js proxy замість прямих запитів
+   */
+  constructor(baseUrl: string, useProxy = false) {
     this.baseUrl = baseUrl;
+    this.useProxy = useProxy;
     this.defaultHeaders = {
       "Content-Type": "application/json",
     };
   }
 
-  // Виконує HTTP запит до API
+  /**
+   * Виконує HTTP запит до API
+   *
+   * 🔒 КРИТИЧНО: При використанні proxy режиму токени не передаються в headers
+   * натомість Next.js автоматично додає їх на server-side
+   */
   private async request<T>(
     endpoint: string,
     config: RequestConfig = {}
   ): Promise<T> {
     const { token, ...fetchConfig } = config;
+
+    // Визначаємо URL залежно від режиму
+    const url = this.useProxy
+      ? `/api/proxy${endpoint}` // Через Next.js proxy
+      : `${this.baseUrl}${endpoint}`; // Прямо до backend
 
     // Створюємо об'єкт headers
     const headers: Record<string, string> = {
@@ -32,24 +54,26 @@ export class ApiClient {
       ...(config.headers as Record<string, string>),
     };
 
-    // Додаємо токен авторизації якщо він переданий
-    if (token) {
+    // 🔒 КРИТИЧНО: Токен передаємо тільки якщо НЕ використовуємо proxy
+    // В proxy режимі токени додаються автоматично на server-side
+    if (token && !this.useProxy) {
       headers["Authorization"] = `Bearer ${token}`;
     }
 
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetch(url, {
         ...fetchConfig,
         headers,
       });
 
       // Обробка помилок HTTP
       if (!response.ok) {
-        // Special handling for 401 errors
+        // Спеціальна обробка 401 помилок (неавторизований доступ)
         if (response.status === 401) {
           await handleFetchError(response);
         }
 
+        // Парсимо помилку з відповіді
         const error: ApiError = await response.json().catch(() => ({
           error: `HTTP Error ${response.status}`,
         }));
@@ -61,9 +85,9 @@ export class ApiClient {
     } catch (error) {
       console.error("API Request Error:", error);
 
-      // Handle 401 errors specifically
+      // Обробка 401 помилок через interceptor
       if (isUnauthorizedError(error)) {
-        // The error will be handled by the interceptor
+        // Помилка буде оброблена interceptor'ом (автоматичний logout)
         throw error;
       }
 
@@ -71,12 +95,12 @@ export class ApiClient {
     }
   }
 
-  // GET запит
+  //GET запит - отримання даних
   async get<T>(endpoint: string, token?: string): Promise<T> {
     return this.request<T>(endpoint, { method: "GET", token });
   }
 
-  // POST запит
+  //POST запит - створення нових записів
   async post<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
       method: "POST",
@@ -85,7 +109,7 @@ export class ApiClient {
     });
   }
 
-  // PUT запит
+  //PUT запит - повне оновлення записів
   async put<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
       method: "PUT",
@@ -94,17 +118,30 @@ export class ApiClient {
     });
   }
 
-  // DELETE запит
+  //DELETE запит - видалення записів
   async delete<T>(endpoint: string, token?: string): Promise<T> {
     return this.request<T>(endpoint, { method: "DELETE", token });
   }
 
-  // PATCH запит
+  //PATCH запит - часткове оновлення записів
   async patch<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
       method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
       token,
     });
+  }
+
+  /**
+   * Перемикання режиму proxy
+   * @param useProxy - чи використовувати proxy
+   */
+  setProxyMode(useProxy: boolean): void {
+    this.useProxy = useProxy;
+  }
+
+  //Отримання поточного режиму
+  isProxyMode(): boolean {
+    return this.useProxy;
   }
 }

@@ -1,62 +1,43 @@
 // apps/admin/app/unauthorized/page.tsx
 
-import { Button } from "@ecity/ui";
-import { AlertTriangle, Home, LogIn } from "lucide-react";
 import Link from "next/link";
+import { AlertCircle } from "lucide-react";
+import { Button } from "@ecity/ui";
 
-/**
- * Сторінка для відображення помилки доступу в адмін панелі
- */
 export default function UnauthorizedPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
-        <div className="text-center">
-          {/* Іконка помилки */}
-          <div className="mx-auto h-24 w-24 rounded-full bg-red-100 flex items-center justify-center">
-            <AlertTriangle className="h-12 w-12 text-red-600" />
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-md w-full text-center p-8">
+        <div className="mx-auto h-16 w-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
+          <AlertCircle className="h-8 w-8 text-red-600" />
+        </div>
 
-          {/* Заголовок */}
-          <h1 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Доступ заборонено
-          </h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">403</h1>
 
-          {/* Опис */}
-          <p className="mt-4 text-lg text-gray-600">
-            У вас немає прав для доступу до цієї сторінки
-          </p>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          Доступ заборонено
+        </h2>
 
-          <p className="mt-2 text-sm text-gray-500">
-            Зверніться до адміністратора для отримання відповідних прав
-          </p>
+        <p className="text-gray-600 mb-4">
+          У вас немає прав для доступу до цієї сторінки.
+        </p>
 
-          {/* Кнопки дій */}
-          <div className="mt-8 space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/dashboard">
-                <Button variant="outline" className="w-full sm:w-auto">
-                  <Home className="h-4 w-4 mr-2" />
-                  На головну
-                </Button>
-              </Link>
+        <p className="text-sm text-gray-500 mb-8">
+          Для доступу до адмін-панелі потрібна роль <strong>Модератора</strong>,
+          <strong> Адміністратора</strong> або{" "}
+          <strong>Супер-Адміністратора</strong>.
+        </p>
 
-              <Link href="/login">
-                <Button className="w-full sm:w-auto">
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Увійти як інший користувач
-                </Button>
-              </Link>
-            </div>
-          </div>
+        <div className="flex flex-col gap-3">
+          <Link href="/dashboard">
+            <Button className="w-full">Повернутись на головну</Button>
+          </Link>
 
-          {/* Додаткова інформація */}
-          <div className="mt-8 p-4 bg-yellow-50 rounded-md">
-            <p className="text-sm text-yellow-800">
-              <strong>Потрібні права:</strong> Модератор, Адміністратор або
-              Супер Адміністратор
-            </p>
-          </div>
+          <Link href="/login">
+            <Button variant="outline" className="w-full">
+              Увійти іншим акаунтом
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

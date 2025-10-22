@@ -1,10 +1,9 @@
 // apps/admin/lib/api-client.ts
 
-import { createApiClient } from '@ecity/api-client';
+import { ApiClient } from "@ecity/api-client";
 
-/**
- * Ініціалізація API клієнта для адмін панелі
- */
-export const apiClient = createApiClient(
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+// Використовуємо proxy для приховування токенів
+export const apiClient = new ApiClient(
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  true // ← useProxy = true
 );
