@@ -3,7 +3,14 @@
 import { Suspense } from "react";
 import { requirePermission } from "@ecity/auth";
 import { Permission } from "@ecity/types";
-import { FileText, Search, Filter, TrendingUp, CheckCircle, Clock } from "lucide-react";
+import {
+  FileText,
+  Search,
+  Filter,
+  TrendingUp,
+  CheckCircle,
+  Clock,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@ecity/ui";
 
@@ -79,8 +86,30 @@ export default async function PetitionsManagementPage() {
         <div className="bg-white rounded-lg shadow-sm border p-4">
           <div className="flex items-center justify-between">
             <div>
+              <p className="text-sm font-medium text-gray-600">
+                Всього петицій
+              </p>
+              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+            </div>
+            <FileText className="h-8 w-8 text-gray-600" />
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Активні</p>
+              <p className="text-2xl font-bold text-blue-600">{stats.active}</p>
+            </div>
+            <Clock className="h-8 w-8 text-blue-600" />
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border p-4">
+          <div className="flex items-center justify-between">
+            <div>
               <p className="text-sm font-medium text-gray-600">Досягли мети</p>
-              <p className="text-2xl font-bold text-green-600">{stats.achieved}</p>
+              <p className="text-2xl font-bold text-green-600">
+                {stats.achieved}
+              </p>
             </div>
             <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
@@ -88,8 +117,12 @@ export default async function PetitionsManagementPage() {
         <div className="bg-white rounded-lg shadow-sm border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Всього підписів</p>
-              <p className="text-2xl font-bold text-purple-600">{stats.totalSignatures}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Всього підписів
+              </p>
+              <p className="text-2xl font-bold text-purple-600">
+                {stats.totalSignatures}
+              </p>
             </div>
             <TrendingUp className="h-8 w-8 text-purple-600" />
           </div>
@@ -113,9 +146,8 @@ export default async function PetitionsManagementPage() {
             <select className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
               <option value="">Всі категорії</option>
               <option value="infrastructure">Інфраструктура</option>
-              <option value="improvement">Благоустрій</option>
+              <option value="ecology">Екологія</option>
               <option value="healthcare">Охорона здоров'я</option>
-              <option value="education">Освіта</option>
             </select>
             <select className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
               <option value="">Всі статуси</option>
@@ -124,22 +156,18 @@ export default async function PetitionsManagementPage() {
               <option value="achieved">Досягли мети</option>
               <option value="rejected">Відхилені</option>
             </select>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Filter className="h-4 w-4" />
-              Фільтри
-            </Button>
           </div>
         </div>
       </div>
 
-      {/* Список петицій */}
+      {/* Таблиця петицій */}
       <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-        <Suspense fallback={<div className="p-8 text-center">Завантаження...</div>}>
+        <Suspense fallback={<div>Завантаження...</div>}>
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Петиція
+                  Назва
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Категорія
@@ -163,7 +191,9 @@ export default async function PetitionsManagementPage() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {petitions.map((petition) => {
-                const progress = Math.round((petition.signatures / petition.goal) * 100);
+                const progress = Math.round(
+                  (petition.signatures / petition.goal) * 100
+                );
                 return (
                   <tr key={petition.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
@@ -191,15 +221,17 @@ export default async function PetitionsManagementPage() {
                               progress >= 100
                                 ? "bg-green-600"
                                 : progress >= 75
-                                ? "bg-blue-600"
-                                : progress >= 50
-                                ? "bg-yellow-600"
-                                : "bg-orange-600"
+                                  ? "bg-blue-600"
+                                  : progress >= 50
+                                    ? "bg-yellow-600"
+                                    : "bg-orange-600"
                             }`}
                             style={{ width: `${Math.min(progress, 100)}%` }}
                           />
                         </div>
-                        <div className="text-xs text-gray-600 mt-1">{progress}%</div>
+                        <div className="text-xs text-gray-600 mt-1">
+                          {progress}%
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -208,19 +240,19 @@ export default async function PetitionsManagementPage() {
                           petition.status === "active"
                             ? "bg-blue-100 text-blue-800"
                             : petition.status === "pending"
-                            ? "bg-orange-100 text-orange-800"
-                            : petition.status === "achieved"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                              ? "bg-orange-100 text-orange-800"
+                              : petition.status === "achieved"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
                         }`}
                       >
                         {petition.status === "active"
                           ? "Активна"
                           : petition.status === "pending"
-                          ? "На розгляді"
-                          : petition.status === "achieved"
-                          ? "Досягла мети"
-                          : "Відхилена"}
+                            ? "На розгляді"
+                            : petition.status === "achieved"
+                              ? "Досягла мети"
+                              : "Відхилена"}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -285,21 +317,3 @@ export default async function PetitionsManagementPage() {
     </div>
   );
 }
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Всього петицій</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-            </div>
-            <FileText className="h-8 w-8 text-gray-600" />
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Активні</p>
-              <p className="text-2xl font-bold text-blue-600">{stats.active}</p>
-            </div>
-            <Clock className="h-8 w-8 text-blue-600" />
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border p-4">
