@@ -109,36 +109,70 @@ async function proxyHandler(
  * 🔒 КРИТИЧНО: Всі HTTP методи захищені дозволом MODERATE_ANNOUNCEMENT
  * Це базовий дозвіл для модераторів. Для більш точного контролю можна
  * додати перевірку конкретних дозволів залежно від endpoint'а
+ *
+ * ⚠️ ВИПРАВЛЕННЯ TypeScript помилки 2345:
+ * У Next.js 13+ App Router з dynamic segments, params передається як Promise.
+ * Потрібно використовувати async/await для отримання params перед викликом handler.
  */
 
 // GET запити - перегляд даних
 export const GET = withApiPermission(
   Permission.MODERATE_ANNOUNCEMENT,
-  proxyHandler
+  async (
+    req: NextRequest,
+    context: { params: Promise<{ path: string[] }> }
+  ) => {
+    const params = await context.params;
+    return proxyHandler(req, { params });
+  }
 );
 
 // POST запити - створення нових записів
 export const POST = withApiPermission(
   Permission.MODERATE_ANNOUNCEMENT,
-  proxyHandler
+  async (
+    req: NextRequest,
+    context: { params: Promise<{ path: string[] }> }
+  ) => {
+    const params = await context.params;
+    return proxyHandler(req, { params });
+  }
 );
 
 // PUT запити - повне оновлення записів
 export const PUT = withApiPermission(
   Permission.MODERATE_ANNOUNCEMENT,
-  proxyHandler
+  async (
+    req: NextRequest,
+    context: { params: Promise<{ path: string[] }> }
+  ) => {
+    const params = await context.params;
+    return proxyHandler(req, { params });
+  }
 );
 
 // PATCH запити - часткове оновлення записів
 export const PATCH = withApiPermission(
   Permission.MODERATE_ANNOUNCEMENT,
-  proxyHandler
+  async (
+    req: NextRequest,
+    context: { params: Promise<{ path: string[] }> }
+  ) => {
+    const params = await context.params;
+    return proxyHandler(req, { params });
+  }
 );
 
 // DELETE запити - видалення записів
 export const DELETE = withApiPermission(
   Permission.MODERATE_ANNOUNCEMENT,
-  proxyHandler
+  async (
+    req: NextRequest,
+    context: { params: Promise<{ path: string[] }> }
+  ) => {
+    const params = await context.params;
+    return proxyHandler(req, { params });
+  }
 );
 
 // OPTIONS запити - для CORS preflight

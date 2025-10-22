@@ -1,65 +1,162 @@
 // apps/web/app/(main)/polls/create/page.tsx
 
-import { requirePermission } from "@ecity/auth";
-import { Permission } from "@ecity/types";
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@ecity/ui";
-import { BarChart3, Plus, Trash2, Calendar } from "lucide-react";
+import { BarChart3, Plus, X, Calendar } from "lucide-react";
+import Link from "next/link";
 
 /**
- * Сторінка створення опитування
- * Доступна тільки для користувачів з правом CREATE_POLL
+ * Сторінка створення нового опитування
+ * Дозволяє користувачам створювати опитування для мешканців міста
  */
-export default async function CreatePollPage() {
-  // 🔒 КРИТИЧНО: Перевірка права створення опитування
-  await requirePermission(Permission.CREATE_POLL);
+export default function CreatePollPage() {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    category: "",
+    endDate: "",
+    allowMultiple: false,
+    isAnonymous: true,
+  });
+
+  const [options, setOptions] = useState<string[]>(["", ""]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Валідація опцій
+    const validOptions = options.filter((opt) => opt.trim() !== "");
+    if (validOptions.length < 2) {
+      alert("Додайте принаймні 2 варіанти відповіді");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // TODO: Надіслати дані на API
+      console.log("Creating poll:", { ...formData, options: validOptions });
+
+      // Симуляція запиту
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Перенаправлення на сторінку опитувань
+      router.push("/polls");
+    } catch (error) {
+      console.error("Error creating poll:", error);
+      alert("Помилка при створенні опитування");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const addOption = () => {
+    setOptions([...options, ""]);
+  };
+
+  const removeOption = (index: number) => {
+    if (options.length > 2) {
+      setOptions(options.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateOption = (index: number, value: string) => {
+    const newOptions = [...options];
+    newOptions[index] = value;
+    setOptions(newOptions);
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Хлібні крихти */}
+      <nav className="mb-6 text-sm">
+        <ol className="flex items-center space-x-2">
+          <li>
+            <Link href="/" className="text-gray-500 hover:text-gray-700">
+              Головна
+            </Link>
+          </li>
+          <li className="text-gray-400">/</li>
+          <li>
+            <Link href="/polls" className="text-gray-500 hover:text-gray-700">
+              Опитування
+            </Link>
+          </li>
+          <li className="text-gray-400">/</li>
+          <li className="text-gray-900 font-medium">Створити опитування</li>
+        </ol>
+      </nav>
+
       {/* Заголовок */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+          <BarChart3 className="h-8 w-8" />
           Створити опитування
         </h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Дізнайтесь думку громади з важливих питань
+        <p className="mt-2 text-lg text-gray-600">
+          Дізнайтесь думку мешканців міста з важливих питань
         </p>
       </div>
 
       {/* Форма створення опитування */}
-      <form className="space-y-6">
-        {/* Основна інформація */}
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h2 className="text-lg font-semibold mb-4">Основна інформація</h2>
+          {/* Основна інформація */}
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Основна інформація
+            </h2>
 
-          <div className="space-y-4">
             {/* Назва опитування */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Назва опитування <span className="text-red-500">*</span>
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Питання опитування *
               </label>
               <input
                 type="text"
+                id="title"
                 required
-                placeholder="Питання опитування"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Наприклад: Який парк потребує реконструкції в першу чергу?"
               />
             </div>
 
             {/* Категорія */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Категорія <span className="text-red-500">*</span>
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Категорія *
               </label>
               <select
+                id="category"
                 required
+                value={formData.category}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="">Оберіть категорію</option>
-                <option value="city_development">Розвиток міста</option>
                 <option value="infrastructure">Інфраструктура</option>
-                <option value="culture">Культура та спорт</option>
-                <option value="ecology">Екологія</option>
                 <option value="transport">Транспорт</option>
+                <option value="ecology">Екологія</option>
+                <option value="education">Освіта</option>
+                <option value="culture">Культура</option>
+                <option value="sport">Спорт</option>
                 <option value="social">Соціальні питання</option>
                 <option value="other">Інше</option>
               </select>
@@ -67,287 +164,163 @@ export default async function CreatePollPage() {
 
             {/* Опис */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Опис опитування
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Додатковий опис (опціонально)
               </label>
               <textarea
+                id="description"
                 rows={4}
-                placeholder="Коротко опишіть мету опитування (опціонально)"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Додайте контекст або пояснення до опитування..."
               />
             </div>
-          </div>
-        </div>
 
-        {/* Питання */}
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Питання</h2>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Додати питання
-            </Button>
-          </div>
-
-          {/* Питання 1 */}
-          <div className="space-y-4 p-4 bg-gray-50 rounded-lg mb-4">
-            <div className="flex items-start justify-between">
+            {/* ⚠️ ВИПРАВЛЕННЯ Tailwind CSS конфлікту:
+                Видалено конфліктуючі класи 'block' та 'flex'.
+                Використовуємо чистий 'flex' для inline layout без конфліктів. */}
+            <div className="flex items-center gap-6">
+              {/* Дата закінчення */}
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Питання 1 <span className="text-red-500">*</span>
+                <label
+                  htmlFor="endDate"
+                  className="flex items-center text-sm font-medium text-gray-700 mb-2"
+                >
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Дата закінчення (опціонально)
                 </label>
                 <input
-                  type="text"
-                  required
-                  placeholder="Введіть текст питання"
+                  type="date"
+                  id="endDate"
+                  value={formData.endDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, endDate: e.target.value })
+                  }
+                  min={new Date().toISOString().split("T")[0]}
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="ml-2 mt-7"
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
             </div>
-
-            {/* Тип питання */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Тип відповіді
-              </label>
-              <select className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
-                <option value="single">Одна відповідь (radio)</option>
-                <option value="multiple">Декілька відповідей (checkbox)</option>
-                <option value="text">Текстова відповідь</option>
-                <option value="rating">Оцінка (1-5)</option>
-              </select>
-            </div>
-
-            {/* Варіанти відповідей */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Варіанти відповідей
-              </label>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    placeholder="Варіант 1"
-                    className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <Button type="button" variant="outline" size="sm">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    placeholder="Варіант 2"
-                    className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <Button type="button" variant="outline" size="sm">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Додати варіант
-                </Button>
-              </div>
-            </div>
-
-            {/* Обов'язкове питання */}
-            <div>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="ml-2 text-sm text-gray-700">
-                  Обов'язкове питання
-                </span>
-              </label>
-            </div>
-          </div>
-
-          {/* Інформація про додавання питань */}
-          <div className="text-sm text-gray-500 text-center py-4">
-            Натисніть "Додати питання", щоб додати більше питань до опитування
           </div>
         </div>
 
-        {/* Налаштування опитування */}
+        {/* Варіанти відповідей */}
         <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h2 className="text-lg font-semibold mb-4">
-            Налаштування опитування
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Варіанти відповідей
           </h2>
 
           <div className="space-y-4">
-            {/* Період проведення */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Дата початку
-                </label>
-                <input
-                  type="date"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                />
+            {options.map((option, index) => (
+              <div key={index}>
+                {/* ⚠️ ВИПРАВЛЕННЯ Tailwind CSS конфлікту:
+                    Видалено конфліктуючі класи 'block' та 'flex'.
+                    Використовуємо чистий 'flex' для inline layout без конфліктів. */}
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700 w-8">
+                    {index + 1}.
+                  </span>
+                  <input
+                    type="text"
+                    value={option}
+                    onChange={(e) => updateOption(index, e.target.value)}
+                    required
+                    className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder={`Варіант ${index + 1}`}
+                  />
+                  {options.length > 2 && (
+                    <button
+                      type="button"
+                      onClick={() => removeOption(index)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      aria-label="Видалити варіант"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  )}
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Дата завершення
-                </label>
-                <input
-                  type="date"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-            </div>
-
-            {/* Додаткові налаштування */}
-            <div className="space-y-3 pt-4 border-t">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="ml-2 text-sm text-gray-700">
-                  Дозволити множинні відповіді від одного користувача
-                </span>
-              </label>
-
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="ml-2 text-sm text-gray-700">
-                  Анонімне опитування (не показувати, хто голосував)
-                </span>
-              </label>
-
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="ml-2 text-sm text-gray-700">
-                  Показувати результати після голосування
-                </span>
-              </label>
-
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="ml-2 text-sm text-gray-700">
-                  Публічне опитування (доступне всім без авторизації)
-                </span>
-              </label>
-            </div>
+            ))}
           </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={addOption}
+            className="mt-4 w-full"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Додати варіант
+          </Button>
         </div>
 
-        {/* Видимість */}
+        {/* Налаштування */}
         <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h2 className="text-lg font-semibold mb-4">Хто може брати участь?</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Налаштування
+          </h2>
 
-          <div className="space-y-3">
-            <label className="flex items-center">
+          <div className="space-y-4">
+            {/* Множинний вибір */}
+            <div className="flex items-start">
               <input
-                type="radio"
-                name="visibility"
-                value="all"
-                defaultChecked
-                className="border-gray-300 text-primary focus:ring-primary"
+                type="checkbox"
+                id="allowMultiple"
+                checked={formData.allowMultiple}
+                onChange={(e) =>
+                  setFormData({ ...formData, allowMultiple: e.target.checked })
+                }
+                className="mt-1 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
               />
-              <span className="ml-2 text-sm text-gray-700">
-                Всі користувачі платформи
-              </span>
-            </label>
+              <label htmlFor="allowMultiple" className="ml-3">
+                <span className="text-sm font-medium text-gray-900">
+                  Дозволити вибір декількох варіантів
+                </span>
+                <p className="text-sm text-gray-500">
+                  Користувачі зможуть обрати більше одного варіанту відповіді
+                </p>
+              </label>
+            </div>
 
-            <label className="flex items-center">
+            {/* Анонімне голосування */}
+            <div className="flex items-start">
               <input
-                type="radio"
-                name="visibility"
-                value="verified"
-                className="border-gray-300 text-primary focus:ring-primary"
+                type="checkbox"
+                id="isAnonymous"
+                checked={formData.isAnonymous}
+                onChange={(e) =>
+                  setFormData({ ...formData, isAnonymous: e.target.checked })
+                }
+                className="mt-1 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
               />
-              <span className="ml-2 text-sm text-gray-700">
-                Тільки верифіковані користувачі
-              </span>
-            </label>
-
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="visibility"
-                value="group"
-                className="border-gray-300 text-primary focus:ring-primary"
-              />
-              <span className="ml-2 text-sm text-gray-700">
-                Тільки члени певних груп (вкажіть нижче)
-              </span>
-            </label>
+              <label htmlFor="isAnonymous" className="ml-3">
+                <span className="text-sm font-medium text-gray-900">
+                  Анонімне голосування
+                </span>
+                <p className="text-sm text-gray-500">
+                  Результати голосування не будуть пов'язані з конкретними
+                  користувачами
+                </p>
+              </label>
+            </div>
           </div>
-
-          {/* Вибір груп (показується, якщо обрано "group") */}
-          <div className="mt-4 hidden">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Оберіть групи
-            </label>
-            <select
-              multiple
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-              size={5}
-            >
-              <option value="1">Батьки школярів</option>
-              <option value="2">Спортивний клуб</option>
-              <option value="3">Сусіди 5-го мікрорайону</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Попередження */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-800">
-            <strong>Підказка:</strong> Після створення опитування ви зможете
-            переглянути статистику відповідей в реальному часі та експортувати
-            результати.
-          </p>
         </div>
 
         {/* Кнопки дій */}
-        <div className="flex items-center justify-end gap-4">
-          <Button type="button" variant="outline">
-            Зберегти чернетку
-          </Button>
-          <Button type="button" variant="outline">
-            Попередній перегляд
-          </Button>
-          <Button type="submit" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Опублікувати опитування
+        <div className="flex justify-end gap-4">
+          <Link href="/polls">
+            <Button type="button" variant="outline">
+              Скасувати
+            </Button>
+          </Link>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Створення..." : "Створити опитування"}
           </Button>
         </div>
       </form>

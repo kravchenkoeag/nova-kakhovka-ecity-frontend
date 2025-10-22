@@ -3,7 +3,15 @@
 import { requireAuth } from "@ecity/auth";
 import { Button } from "@ecity/ui";
 import Link from "next/link";
-import { Users, Search, Plus, MessageSquare, Lock, Globe } from "lucide-react";
+import {
+  Users,
+  Search,
+  Plus,
+  MessageSquare,
+  Lock,
+  Globe,
+  Filter,
+} from "lucide-react";
 
 /**
  * Сторінка списку груп
@@ -82,6 +90,7 @@ export default async function GroupsPage() {
             </div>
           </div>
           <div className="flex gap-2">
+            <Filter className="h-5 w-5 text-gray-400 self-center" />
             <select className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
               <option value="">Всі типи</option>
               <option value="neighborhood">Сусідство</option>
@@ -144,41 +153,43 @@ export default async function GroupsPage() {
                   {group.name}
                 </h3>
                 <div className="flex-shrink-0 ml-2">
+                  {/* ⚠️ ВИПРАВЛЕННЯ TypeScript помилки 2322:
+                      Lucide React іконки не підтримують атрибут 'title'.
+                      Використовуємо 'aria-label' для accessibility замість 'title'. */}
                   {group.is_public ? (
-                    <Globe className="h-5 w-5 text-blue-500" title="Публічна" />
+                    <Globe
+                      className="h-5 w-5 text-blue-500"
+                      aria-label="Публічна група"
+                    />
                   ) : (
-                    <Lock className="h-5 w-5 text-gray-500" title="Приватна" />
+                    <Lock
+                      className="h-5 w-5 text-gray-500"
+                      aria-label="Приватна група"
+                    />
                   )}
                 </div>
               </div>
-
               <p className="text-sm text-gray-600 line-clamp-2 mb-4">
                 {group.description}
               </p>
 
+              {/* Статистика */}
               <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                 <div className="flex items-center">
                   <Users className="h-4 w-4 mr-1" />
-                  {group.members_count} учасників
+                  <span>{group.members_count} учасників</span>
                 </div>
                 <div className="flex items-center">
                   <MessageSquare className="h-4 w-4 mr-1" />
-                  {group.messages_count}
+                  <span>{group.messages_count}</span>
                 </div>
               </div>
 
-              <div className="text-xs text-gray-400 mb-4">
-                Остання активність:{" "}
-                {new Date(group.last_activity).toLocaleDateString("uk-UA", {
-                  day: "numeric",
-                  month: "short",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </div>
-
+              {/* Кнопка переходу */}
               <Link href={`/groups/${group.id}`}>
-                <Button className="w-full">Переглянути групу</Button>
+                <Button variant="outline" className="w-full">
+                  Переглянути групу
+                </Button>
               </Link>
             </div>
           </div>
@@ -187,22 +198,14 @@ export default async function GroupsPage() {
 
       {/* Пагінація */}
       <div className="mt-8 flex justify-center">
-        <nav className="flex items-center gap-2">
-          <Button variant="outline" size="sm" disabled>
+        <nav className="flex gap-2">
+          <Button variant="outline" disabled>
             Попередня
           </Button>
-          <Button variant="outline" size="sm">
-            1
-          </Button>
-          <Button variant="outline" size="sm">
-            2
-          </Button>
-          <Button variant="outline" size="sm">
-            3
-          </Button>
-          <Button variant="outline" size="sm">
-            Наступна
-          </Button>
+          <Button variant="outline">1</Button>
+          <Button variant="outline">2</Button>
+          <Button variant="outline">3</Button>
+          <Button variant="outline">Наступна</Button>
         </nav>
       </div>
     </div>
