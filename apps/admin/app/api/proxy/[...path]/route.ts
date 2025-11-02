@@ -1,8 +1,9 @@
 // apps/admin/app/api/proxy/[...path]/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
-import { withApiPermission } from "@ecity/auth";
-import { Permission } from "@ecity/types";
+import { getToken } from "next-auth/jwt";
+import { UserRole, Permission } from "@ecity/types";
+import { hasPermission } from "@ecity/auth";
 
 /**
  * API Proxy для адмін панелі
@@ -21,6 +22,33 @@ async function proxyHandler(
   { params }: { params: { path: string[] } }
 ) {
   try {
+    // 🔒 КРИТИЧНО: Перевіряємо авторизацію та дозволення
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Перевіряємо роль користувача
+    const userRole = token.role as UserRole;
+    if (!userRole) {
+      return NextResponse.json(
+        { error: "User role not found" },
+        { status: 401 }
+      );
+    }
+
+    // Перевіряємо дозволення модератора
+    if (!hasPermission(userRole, Permission.MODERATE_ANNOUNCEMENT)) {
+      return NextResponse.json(
+        { error: "Insufficient permissions" },
+        { status: 403 }
+      );
+    }
+
     // Отримуємо backend URL з environment
     const backendUrl = process.env.BACKEND_URL || "http://localhost:8080";
 
@@ -34,14 +62,11 @@ async function proxyHandler(
       url.searchParams.append(key, value);
     });
 
-    // Отримуємо authorization header (встановлений auth middleware)
-    const authHeader = req.headers.get("authorization");
-
     // Готуємо headers для backend запиту
     const headers: HeadersInit = {
       "Content-Type": "application/json",
-      // Форвардимо authorization header якщо є
-      ...(authHeader && { Authorization: authHeader }),
+      // 🔒 КРИТИЧНО: Використовуємо accessToken з token
+      Authorization: `Bearer ${token.accessToken}`,
       // Форвардимо інші важливі headers
       "User-Agent": req.headers.get("user-agent") || "",
       Accept: req.headers.get("accept") || "application/json",
@@ -106,74 +131,57 @@ async function proxyHandler(
 }
 
 /**
- * 🔒 КРИТИЧНО: Всі HTTP методи захищені дозволом MODERATE_ANNOUNCEMENT
- * Це базовий дозвіл для модераторів. Для більш точного контролю можна
- * додати перевірку конкретних дозволів залежно від endpoint'а
+ * 🔒 КРИТИЧНО: Всі HTTP методи захищені перевіркою дозволів
+ * ✅ ВИПРАВЛЕННЯ Next.js 15: params тепер Promise
  *
- * ⚠️ ВИПРАВЛЕННЯ TypeScript помилки 2345:
- * У Next.js 13+ App Router з dynamic segments, params передається як Promise.
- * Потрібно використовувати async/await для отримання params перед викликом handler.
+ * Замість використання withApiPermission, обробляємо авторизацію
+ * безпосередньо в proxyHandler для підтримки context з params
  */
 
 // GET запити - перегляд даних
-export const GET = withApiPermission(
-  Permission.MODERATE_ANNOUNCEMENT,
-  async (
-    req: NextRequest,
-    context: { params: Promise<{ path: string[] }> }
-  ) => {
-    const params = await context.params;
-    return proxyHandler(req, { params });
-  }
-);
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> }
+) {
+  const params = await context.params; // ✅ await params
+  return proxyHandler(req, { params });
+}
 
 // POST запити - створення нових записів
-export const POST = withApiPermission(
-  Permission.MODERATE_ANNOUNCEMENT,
-  async (
-    req: NextRequest,
-    context: { params: Promise<{ path: string[] }> }
-  ) => {
-    const params = await context.params;
-    return proxyHandler(req, { params });
-  }
-);
+export async function POST(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> }
+) {
+  const params = await context.params; // ✅ await params
+  return proxyHandler(req, { params });
+}
 
 // PUT запити - повне оновлення записів
-export const PUT = withApiPermission(
-  Permission.MODERATE_ANNOUNCEMENT,
-  async (
-    req: NextRequest,
-    context: { params: Promise<{ path: string[] }> }
-  ) => {
-    const params = await context.params;
-    return proxyHandler(req, { params });
-  }
-);
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> }
+) {
+  const params = await context.params; // ✅ await params
+  return proxyHandler(req, { params });
+}
 
 // PATCH запити - часткове оновлення записів
-export const PATCH = withApiPermission(
-  Permission.MODERATE_ANNOUNCEMENT,
-  async (
-    req: NextRequest,
-    context: { params: Promise<{ path: string[] }> }
-  ) => {
-    const params = await context.params;
-    return proxyHandler(req, { params });
-  }
-);
+export async function PATCH(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> }
+) {
+  const params = await context.params; // ✅ await params
+  return proxyHandler(req, { params });
+}
 
 // DELETE запити - видалення записів
-export const DELETE = withApiPermission(
-  Permission.MODERATE_ANNOUNCEMENT,
-  async (
-    req: NextRequest,
-    context: { params: Promise<{ path: string[] }> }
-  ) => {
-    const params = await context.params;
-    return proxyHandler(req, { params });
-  }
-);
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> }
+) {
+  const params = await context.params; // ✅ await params
+  return proxyHandler(req, { params });
+}
 
 // OPTIONS запити - для CORS preflight
 export async function OPTIONS() {

@@ -116,46 +116,55 @@ async function proxyHandler(
 /**
  * HTTP методи для проксування
  * Всі методи автоматично перевіряють авторизацію через session
+ *
+ * ✅ ВИПРАВЛЕННЯ Next.js 15: params тепер Promise
+ * У Next.js 15 params в dynamic routes став Promise<T> замість T
+ * Потрібно await params перед передачею в handler
  */
 
 // GET запити - отримання даних
 export async function GET(
   req: NextRequest,
-  context: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> }
 ) {
-  return proxyHandler(req, context);
+  const params = await context.params; // ✅ await params
+  return proxyHandler(req, { params });
 }
 
 // POST запити - створення нових записів
 export async function POST(
   req: NextRequest,
-  context: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> }
 ) {
-  return proxyHandler(req, context);
+  const params = await context.params; // ✅ await params
+  return proxyHandler(req, { params });
 }
 
 // PUT запити - повне оновлення записів
 export async function PUT(
   req: NextRequest,
-  context: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> }
 ) {
-  return proxyHandler(req, context);
+  const params = await context.params; // ✅ await params
+  return proxyHandler(req, { params });
 }
 
 // PATCH запити - часткове оновлення записів
 export async function PATCH(
   req: NextRequest,
-  context: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> }
 ) {
-  return proxyHandler(req, context);
+  const params = await context.params; // ✅ await params
+  return proxyHandler(req, { params });
 }
 
 // DELETE запити - видалення записів
 export async function DELETE(
   req: NextRequest,
-  context: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> }
 ) {
-  return proxyHandler(req, context);
+  const params = await context.params; // ✅ await params
+  return proxyHandler(req, { params });
 }
 
 // OPTIONS запити - для CORS preflight

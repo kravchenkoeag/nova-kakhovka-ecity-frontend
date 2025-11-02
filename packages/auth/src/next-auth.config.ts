@@ -7,6 +7,36 @@ import { UserRole, Permission, RolePermissions } from "@ecity/types";
 import "./types";
 
 /**
+ * Мапить backend роль до frontend UserRole enum
+ * Підтримує різні формати backend ролей
+ */
+function mapBackendRoleToFrontend(backendRole: string): UserRole {
+  const roleMap: Record<string, UserRole> = {
+    // Uppercase варіанти
+    USER: UserRole.USER,
+    MODERATOR: UserRole.MODERATOR,
+    ADMIN: UserRole.ADMIN,
+    SUPER_ADMIN: UserRole.SUPER_ADMIN,
+    SUPERADMIN: UserRole.SUPER_ADMIN,
+
+    // Lowercase варіанти
+    user: UserRole.USER,
+    moderator: UserRole.MODERATOR,
+    admin: UserRole.ADMIN,
+    super_admin: UserRole.SUPER_ADMIN,
+    superadmin: UserRole.SUPER_ADMIN,
+
+    // Pascal/Camel case варіанти
+    User: UserRole.USER,
+    Moderator: UserRole.MODERATOR,
+    Admin: UserRole.ADMIN,
+    SuperAdmin: UserRole.SUPER_ADMIN,
+  };
+
+  return roleMap[backendRole] || UserRole.USER;
+}
+
+/**
  * Базова конфігурація NextAuth для обох додатків (admin та web)
  *
  * ВАЖЛИВО: Ця конфігурація повинна працювати в Node.js runtime,
@@ -14,7 +44,8 @@ import "./types";
  * serverComponentsExternalPackages в next.config.js
  */
 export const authOptions: NextAuthOptions = {
-  // Увімкнути debug mode тільки для розробки
+  // ✅ Debug mode - показує детальні логи в консолі
+  // Автоматично вмикається в development режимі
   debug: process.env.NODE_ENV === "development",
 
   // Провайдери авторизації
@@ -32,9 +63,10 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // Викликаємо backend API для авторизації
+          // ✅ ВИПРАВЛЕНО: Правильний URL - /api/v1/login (БЕЗ /auth/)
+          // Backend endpoint: POST /api/v1/login
           const response = await fetch(
-            `${process.env.BACKEND_URL}/api/v1/auth/login`,
+            `${process.env.BACKEND_URL}/api/v1/login`,
             {
               method: "POST",
               headers: {
@@ -76,8 +108,8 @@ export const authOptions: NextAuthOptions = {
             email: data.user.email,
             name:
               `${data.user.first_name || ""} ${data.user.last_name || ""}`.trim() ||
-              data.user.username,
-            username: data.user.username,
+              data.user.email,
+            username: data.user.email,
             accessToken: data.token,
             role: role,
             permissions: permissions,
@@ -150,8 +182,6 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
     signOut: "/login",
     error: "/login",
-    // verifyRequest: '/verify-request',
-    // newUser: '/register'
   },
 
   // Конфігурація сесії
@@ -178,33 +208,3 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
-
-/**
- * Мапить backend роль до frontend UserRole enum
- * Підтримує різні формати backend ролей
- */
-function mapBackendRoleToFrontend(backendRole: string): UserRole {
-  const roleMap: Record<string, UserRole> = {
-    // Uppercase варіанти
-    USER: UserRole.USER,
-    MODERATOR: UserRole.MODERATOR,
-    ADMIN: UserRole.ADMIN,
-    SUPER_ADMIN: UserRole.SUPER_ADMIN,
-    SUPERADMIN: UserRole.SUPER_ADMIN,
-
-    // Lowercase варіанти
-    user: UserRole.USER,
-    moderator: UserRole.MODERATOR,
-    admin: UserRole.ADMIN,
-    super_admin: UserRole.SUPER_ADMIN,
-    superadmin: UserRole.SUPER_ADMIN,
-
-    // Pascal/Camel case варіанти
-    User: UserRole.USER,
-    Moderator: UserRole.MODERATOR,
-    Admin: UserRole.ADMIN,
-    SuperAdmin: UserRole.SUPER_ADMIN,
-  };
-
-  return roleMap[backendRole] || UserRole.USER;
-}

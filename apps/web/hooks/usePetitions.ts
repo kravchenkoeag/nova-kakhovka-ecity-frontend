@@ -1,58 +1,78 @@
 // apps/web/hooks/usePetitions.ts
 
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAccessToken } from '@ecity/auth';
-import { apiClient } from '@/lib/api-client';
-import type { CreatePetitionRequest, SignPetitionRequest } from '@ecity/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAccessToken } from "@ecity/auth";
+import { apiClient } from "@/lib/api"; // ✅ ВИПРАВЛЕНО: змінено імпорт з api-client на api
+import type { CreatePetitionRequest } from "@ecity/types";
 
-// Отримати список петицій
-export function usePetitions(filters?: any) {
+/**
+ * Hook для отримання списку петицій з фільтрацією
+ * @param filters - опціональні фільтри (category, status, page, limit)
+ */
+export function usePetitions(filters?: {
+  category?: string;
+  status?: string;
+  page?: number;
+  limit?: number;
+}) {
   return useQuery({
-    queryKey: ['petitions', filters],
+    queryKey: ["petitions", filters],
     queryFn: () => apiClient.petitions.getAll(filters),
   });
 }
 
-// Отримати петицію за ID
+/**
+ * Hook для отримання деталей окремої петиції
+ * @param id - ідентифікатор петиції
+ */
 export function usePetition(id: string) {
   return useQuery({
-    queryKey: ['petitions', id],
+    queryKey: ["petitions", id],
     queryFn: () => apiClient.petitions.getById(id),
     enabled: !!id,
   });
 }
 
-// Створити петицію
+/**
+ * Hook для створення нової петиції
+ * Автоматично інвалідує кеш після створення
+ */
 export function useCreatePetition() {
   const queryClient = useQueryClient();
   const token = useAccessToken();
 
   return useMutation({
     mutationFn: (data: CreatePetitionRequest) => {
-      if (!token) throw new Error('No token');
+      if (!token) throw new Error("No token");
       return apiClient.petitions.create(data, token);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['petitions'] });
+      // Оновлюємо список петицій після створення
+      queryClient.invalidateQueries({ queryKey: ["petitions"] });
     },
   });
 }
 
-// Підписати петицію
+/**
+ * Hook для підписання петиції
+ * Збільшує лічильник підписів та додає користувача до списку підписантів
+ */
 export function useSignPetition() {
   const queryClient = useQueryClient();
   const token = useAccessToken();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: SignPetitionRequest }) => {
-      if (!token) throw new Error('No token');
-      return apiClient.petitions.sign(id, data, token);
+    mutationFn: ({ petitionId, data }: { petitionId: string; data?: any }) => {
+      if (!token) throw new Error("No token");
+      return apiClient.petitions.sign(petitionId, data || {}, token);
     },
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ['petitions', id] });
-      queryClient.invalidateQueries({ queryKey: ['petitions'] });
+    onSuccess: (_, { petitionId }) => {
+      // Оновлюємо дані конкретної петиції
+      queryClient.invalidateQueries({ queryKey: ["petitions", petitionId] });
+      // Оновлюємо загальний список петицій
+      queryClient.invalidateQueries({ queryKey: ["petitions"] });
     },
   });
 }
