@@ -1,7 +1,13 @@
-// packages/ui/src/index.ts
+// Export all components
+export * from "./components/avatar";
+export * from "./components/button";
+export * from "./components/input";
+export * from "./components/label";
+export * from "./components/card";
+export * from "./components/alert";
+export * from "./components/dialog";
+export * from "./components/select";
+export * from "./components/badge";
 
-export * from './components/button';
-export * from './components/input';
-export * from './components/label';
-export * from './components/avatar';
-export * from './utils';
+// Export utils
+export * from "./utils";
