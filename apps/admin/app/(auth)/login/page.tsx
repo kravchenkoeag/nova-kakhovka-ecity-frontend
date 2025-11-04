@@ -1,137 +1,403 @@
-// apps/admin/app/(auth)/login/page.tsx
+// File: apps/admin/app/(auth)/login/page.tsx
+// Оновити сторінку логіну для адмін панелі
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Button, Input, Label } from '@ecity/ui';
-import { AlertCircle } from 'lucide-react';
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Input,
+  Label,
+  Alert,
+  AlertDescription,
+} from "@ecity/ui";
+import { Loader2, AlertCircle, ShieldAlert } from "lucide-react";
 
 /**
- * Сторінка логіну для модераторів
+ * Сторінка логіну для адмін панелі
  */
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  // 🔄 КРИТИЧНО: callbackUrl для редіректу після логіну
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [blockedInfo, setBlockedInfo] = useState<{
+    reason?: string;
+    blockedAt?: string;
+  } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
+    setError(null);
+    setBlockedInfo(null);
+    setLoading(true);
 
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false, // Не редіректимо автоматично
+      });
+
+      if (result?.error) {
+        // Перевіряємо чи це помилка блокування
+        if (
+          result.error.includes("blocked") ||
+          result.error.includes("заблоковано")
+        ) {
+          // Намагаємось отримати додаткову інформацію про блокування
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/login`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+              }
+            );
+
+            if (response.status === 403) {
+              const data = await response.json();
+              setBlockedInfo({
+                reason: data.block_reason,
+                blockedAt: data.blocked_at,
+              });
+              setError(
+                data.message ||
+                  "Ваш акаунт заблоковано. Зверніться до модератора."
+              );
+            } else {
+              setError(result.error);
+            }
+          } catch {
+            setError("Ваш акаунт заблоковано. Зверніться до модератора.");
+          }
+        } else {
+          setError(result.error);
+        }
+      } else if (result?.ok) {
+        // ✅ Успішний логін - редірект на callbackUrl
+        router.push(callbackUrl);
+        router.refresh();
+      }
+    } catch (err: any) {
+      setError(err.message || "Помилка авторизації");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+              NK
+            </div>
+          </div>
+          <CardTitle className="text-2xl font-bold text-center">
+            Адмін панель
+          </CardTitle>
+          <CardDescription className="text-center">
+            Nova Kakhovka e-City
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email */}
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="admin@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading}
+              />
+            </div>
+
+            {/* Password */}
+            <div className="space-y-2">
+              <Label htmlFor="password">Пароль</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading}
+              />
+            </div>
+
+            {/* Error Alert */}
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {/* Blocked User Info */}
+            {blockedInfo && (
+              <Alert variant="destructive">
+                <ShieldAlert className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="space-y-2">
+                    <p className="font-semibold">Ваш акаунт заблоковано</p>
+                    {blockedInfo.reason && (
+                      <p className="text-sm">
+                        <span className="font-medium">Причина:</span>{" "}
+                        {blockedInfo.reason}
+                      </p>
+                    )}
+                    {blockedInfo.blockedAt && (
+                      <p className="text-sm">
+                        <span className="font-medium">Дата блокування:</span>{" "}
+                        {new Date(blockedInfo.blockedAt).toLocaleString(
+                          "uk-UA"
+                        )}
+                      </p>
+                    )}
+                    <p className="text-sm mt-3 border-t pt-2">
+                      Для розблокування акаунту зверніться до модератора або
+                      адміністратора платформи.
+                    </p>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Submit Button */}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Вхід...
+                </>
+              ) : (
+                "Увійти"
+              )}
+            </Button>
+          </form>
+
+          {/* Info Text */}
+          <p className="mt-4 text-center text-sm text-gray-600">
+            Доступ тільки для модераторів та адміністраторів
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Input,
+  Label,
+  Alert,
+  AlertDescription,
+} from "@ecity/ui";
+import { Loader2, AlertCircle, ShieldAlert } from "lucide-react";
+
+/**
+ * Сторінка логіну для адмін панелі
+ */
+export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [blockedInfo, setBlockedInfo] = useState<{
+    reason?: string;
+    blockedAt?: string;
+  } | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setBlockedInfo(null);
+    setLoading(true);
+
+    try {
+      const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
 
       if (result?.error) {
-        setError('Невірний email або пароль');
-        setIsLoading(false);
-        return;
-      }
+        // Перевіряємо чи це помилка блокування
+        if (
+          result.error.includes("blocked") ||
+          result.error.includes("заблоковано")
+        ) {
+          // Намагаємось отримати додаткову інформацію про блокування
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/login`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+              }
+            );
 
-      router.push(callbackUrl);
-      router.refresh();
-    } catch (err) {
-      setError('Сталася помилка. Спробуйте ще раз.');
-      setIsLoading(false);
+            if (response.status === 403) {
+              const data = await response.json();
+              setBlockedInfo({
+                reason: data.block_reason,
+                blockedAt: data.blocked_at,
+              });
+              setError(
+                data.message ||
+                  "Ваш акаунт заблоковано. Зверніться до модератора."
+              );
+            } else {
+              setError(result.error);
+            }
+          } catch {
+            setError("Ваш акаунт заблоковано. Зверніться до модератора.");
+          }
+        } else {
+          setError(result.error);
+        }
+      } else if (result?.ok) {
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      setError(err.message || "Помилка авторизації");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        {/* Логотип та заголовок */}
-        <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-lg bg-blue-500 flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">NK</span>
-          </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Nova Kakhovka e-City
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Вхід для модераторів
-          </p>
-        </div>
-
-        {/* Форма логіну */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="flex">
-                <AlertCircle className="h-5 w-5 text-red-400" />
-                <div className="ml-3">
-                  <p className="text-sm text-red-800">{error}</p>
-                </div>
-              </div>
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+              NK
             </div>
-          )}
+          </div>
+          <CardTitle className="text-2xl font-bold text-center">
+            Адмін панель
+          </CardTitle>
+          <CardDescription className="text-center">
+            Nova Kakhovka e-City
+          </CardDescription>
+        </CardHeader>
 
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="email">Email адреса</Label>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email */}
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                name="email"
                 type="email"
-                autoComplete="email"
-                required
+                placeholder="admin@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1"
-                placeholder="moderator@example.com"
+                required
+                disabled={loading}
               />
             </div>
 
-            <div>
+            {/* Password */}
+            <div className="space-y-2">
               <Label htmlFor="password">Пароль</Label>
               <Input
                 id="password"
-                name="password"
                 type="password"
-                autoComplete="current-password"
-                required
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1"
-                placeholder="••••••••"
+                required
+                disabled={loading}
               />
             </div>
-          </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Вхід...' : 'Увійти'}
-          </Button>
-        </form>
+            {/* Error Alert */}
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-        {/* Тестові креденшали для розробки */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-4 p-4 bg-yellow-50 rounded-md">
-            <p className="text-xs text-yellow-800 font-medium">
-              Тестові креденшали:
-            </p>
-            <p className="text-xs text-yellow-700 mt-1">
-              Email: moderator@example.com
-            </p>
-            <p className="text-xs text-yellow-700">
-              Password: moderator123
-            </p>
-          </div>
-        )}
-      </div>
+            {/* Blocked User Info */}
+            {blockedInfo && (
+              <Alert variant="destructive">
+                <ShieldAlert className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="space-y-2">
+                    <p className="font-semibold">Ваш акаунт заблоковано</p>
+                    {blockedInfo.reason && (
+                      <p className="text-sm">
+                        <span className="font-medium">Причина:</span>{" "}
+                        {blockedInfo.reason}
+                      </p>
+                    )}
+                    {blockedInfo.blockedAt && (
+                      <p className="text-sm">
+                        <span className="font-medium">Дата блокування:</span>{" "}
+                        {new Date(blockedInfo.blockedAt).toLocaleString(
+                          "uk-UA"
+                        )}
+                      </p>
+                    )}
+                    <p className="text-sm mt-3 border-t pt-2">
+                      Для розблокування акаунту зверніться до модератора або
+                      адміністратора платформи.
+                    </p>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Submit Button */}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Вхід...
+                </>
+              ) : (
+                "Увійти"
+              )}
+            </Button>
+          </form>
+
+          {/* Info Text */}
+          <p className="mt-4 text-center text-sm text-gray-600">
+            Доступ тільки для модераторів та адміністраторів
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

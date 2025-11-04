@@ -1,27 +1,8 @@
-// File: apps/admin/app/(dashboard)/users/page.tsx
+// File: apps/admin/app/(dashboard)/users/UsersManagementClient.tsx
 
-import { requirePermission } from "@ecity/auth";
-import { Permission } from "@ecity/types";
-import UsersManagementClient from "./UsersManagementClient";
+"use client";
 
-/**
- * 🔒 КРИТИЧНО: Server-side захист сторінки управління користувачами
- *
- * Сторінка управління користувачами (Server Component)
- *
- * Багаторівнева захист:
- * 1. Server-Side: requirePermission() - обов'язкова перевірка тут
- * 2. Client-Side: hooks для UX (UsersManagementClient)
- * 3. Backend API: перевірка прав на кожному endpoint
- */
-export default async function UsersManagementPage() {
-  // 🔒 КРИТИЧНО: Server-side перевірка дозволу
-  // Це ОБОВ'ЯЗКОВО для всіх чутливих сторінок!
-  await requirePermission(Permission.MANAGE_USERS);
-
-  // Якщо дозвіл є - рендеримо client component
-  return <UsersManagementClient />;
-}
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import {
   Card,
@@ -60,11 +41,18 @@ import {
 import { User, UserRole, UserHelpers } from "@ecity/types";
 import { apiClient } from "@/lib/api";
 import { UsersListResponse, UserStats } from "@ecity/api-client";
+import { useHasPermission } from "@ecity/auth";
+import { Permission } from "@ecity/types";
 
 /**
- * Сторінка управління користувачами
+ * Client Component для управління користувачами
+ *
+ * 🔒 Захист:
+ * - Server-side: requirePermission() в page.tsx (ОБОВ'ЯЗКОВО!)
+ * - Client-side: useHasPermission() для UX (не для безпеки!)
+ * - Backend API: перевірка прав на кожному endpoint
  */
-export default function UsersPage() {
+export default function UsersManagementClient() {
   const { data: session } = useSession();
   const [users, setUsers] = useState<User[]>([]);
   const [stats, setStats] = useState<UserStats | null>(null);
@@ -85,6 +73,11 @@ export default function UsersPage() {
   const [newPassword, setNewPassword] = useState("");
   const [blockReason, setBlockReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
+
+  // 🔒 Client-side перевірка прав (тільки для UX!)
+  // НЕ для безпеки - безпека на server-side та backend!
+  const canChangePassword = useHasPermission(Permission.MANAGE_USERS);
+  const canBlockUsers = useHasPermission(Permission.BLOCK_USER);
 
   /**
    * Завантаження списку користувачів
@@ -211,12 +204,6 @@ export default function UsersPage() {
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
-
-  // Перевірка прав доступу
-  const canChangePassword =
-    session?.user?.role === "ADMIN" || session?.user?.role === "SUPER_ADMIN";
-  const canBlockUsers =
-    session?.user?.role === "MODERATOR" || canChangePassword;
 
   return (
     <div className="space-y-6">

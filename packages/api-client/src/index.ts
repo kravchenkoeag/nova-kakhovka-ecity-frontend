@@ -1,4 +1,5 @@
-// packages/api-client/src/index.ts
+// File: packages/api-client/src/index.ts
+// Повна версія з EcityApiClient класом та createApiClient функцією
 
 import { ApiClient } from "./client";
 import { AuthApi } from "./endpoints/auth";
@@ -10,6 +11,7 @@ import { PollsApi } from "./endpoints/polls";
 import { CityIssuesApi } from "./endpoints/cityIssues";
 import { TransportApi } from "./endpoints/transport";
 import { NotificationsApi } from "./endpoints/notifications";
+import { UsersApi } from "./endpoints/users"; // NEW
 
 /**
  * Головний клієнт API для Nova Kakhovka e-City
@@ -31,6 +33,7 @@ export class EcityApiClient {
   public cityIssues: CityIssuesApi;
   public transport: TransportApi;
   public notifications: NotificationsApi;
+  public users: UsersApi; // NEW
 
   /**
    * @param baseUrl - базова URL backend API
@@ -49,6 +52,7 @@ export class EcityApiClient {
     this.cityIssues = new CityIssuesApi(this.client);
     this.transport = new TransportApi(this.client);
     this.notifications = new NotificationsApi(this.client);
+    this.users = new UsersApi(this.client); // NEW
   }
 
   /**
@@ -85,18 +89,36 @@ export class EcityApiClient {
  * // Для прямих запитів (development)
  * const apiClient = createApiClient('http://localhost:8080', false);
  */
-export const createApiClient = (baseUrl: string, useProxy = false) => {
+export const createApiClient = (
+  baseUrl: string,
+  useProxy = false
+): EcityApiClient => {
   return new EcityApiClient(baseUrl, useProxy);
 };
 
-// Експорт всіх модулів
-export { ApiClient } from "./client";
-export * from "./endpoints/auth";
-export * from "./endpoints/groups";
-export * from "./endpoints/events";
-export * from "./endpoints/announcements";
-export * from "./endpoints/petitions";
-export * from "./endpoints/polls";
-export * from "./endpoints/cityIssues";
-export * from "./endpoints/transport";
-export * from "./endpoints/notifications";
+// Експорт основних класів
+export { ApiClient };
+
+// Експорт окремих API класів
+export { AuthApi } from "./endpoints/auth";
+export { GroupsApi } from "./endpoints/groups";
+export { EventsApi } from "./endpoints/events";
+export { AnnouncementsApi } from "./endpoints/announcements";
+export { PetitionsApi } from "./endpoints/petitions";
+export { PollsApi } from "./endpoints/polls";
+export { CityIssuesApi } from "./endpoints/cityIssues";
+export { TransportApi } from "./endpoints/transport";
+export { NotificationsApi } from "./endpoints/notifications";
+export { UsersApi } from "./endpoints/users"; // NEW
+
+// Експорт типів з endpoints
+export type * from "./endpoints/auth";
+export type * from "./endpoints/groups";
+export type * from "./endpoints/events";
+export type * from "./endpoints/announcements";
+export type * from "./endpoints/petitions";
+export type * from "./endpoints/polls";
+export type * from "./endpoints/cityIssues";
+export type * from "./endpoints/transport";
+export type * from "./endpoints/notifications";
+export type * from "./endpoints/users"; // NEW
