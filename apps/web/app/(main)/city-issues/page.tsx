@@ -26,7 +26,7 @@ export default function CityIssuesPage() {
   }
 
   // Backend returns { issues: [], pagination: {} } or { data: [] }
-  const issues = issuesData?.issues || issuesData?.data || [];
+  const issues = issuesData?.data || [];
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -168,13 +168,9 @@ export default function CityIssuesPage() {
                     </div>
                     <div className="flex items-center">
                       <span>
-                        {format(
-                          new Date(issue.created_at),
-                          "dd MMMM yyyy",
-                          {
-                            locale: uk,
-                          },
-                        )}
+                        {format(new Date(issue.created_at), "dd MMMM yyyy", {
+                          locale: uk,
+                        })}
                       </span>
                     </div>
                   </div>
@@ -187,4 +183,3 @@ export default function CityIssuesPage() {
     </div>
   );
 }
-

@@ -26,7 +26,8 @@ export default function PetitionsPage() {
   }
 
   // Backend returns { petitions: [], pagination: {} } or { data: [] }
-  const petitions = petitionsData?.petitions || petitionsData?.data || [];
+  //const petitions = petitionsData?.petitions || petitionsData?.data || [];
+  const petitions = petitionsData?.data || [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

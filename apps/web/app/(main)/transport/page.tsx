@@ -35,7 +35,7 @@ export default function TransportPage() {
       acc[type].push(route);
       return acc;
     },
-    {} as Record<string, any[]>,
+    {} as Record<string, any[]>
   );
 
   const getTypeLabel = (type: string) => {
@@ -60,7 +60,9 @@ export default function TransportPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Заголовок */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Громадський транспорт</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Громадський транспорт
+        </h1>
         <p className="mt-2 text-sm text-gray-600">
           Відстежуйте маршрути та розклад громадського транспорту
         </p>
@@ -119,65 +121,69 @@ export default function TransportPage() {
         </div>
       ) : (
         <div className="space-y-8">
-          {Object.entries(routesByType).map(([type, typeRoutes]) => (
-            <div key={type}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                {getTypeLabel(type)}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {typeRoutes.map((route: any) => (
-                  <Link
-                    key={route.id}
-                    href={`/transport/routes/${route.id}`}
-                    className="block bg-white rounded-lg shadow-sm hover:shadow-md transition-all border p-6"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        {/* Номер маршруту */}
-                        <div className="flex items-center gap-2 mb-2">
-                          <span
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold ${getTypeColor(
-                              type,
-                            )}`}
-                          >
-                            {route.number || route.route_number}
-                          </span>
-                          {route.is_active === false && (
-                            <span className="text-xs text-gray-500">
-                              Неактивний
+          {Object.entries(routesByType).map(([type, typeRoutes]) => {
+            const typedRoutes = typeRoutes as any[];
+            return (
+              <div key={type}>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  {getTypeLabel(type)}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {typedRoutes.map((route: any) => (
+                    <Link
+                      key={route.id}
+                      href={`/transport/routes/${route.id}`}
+                      className="block bg-white rounded-lg shadow-sm hover:shadow-md transition-all border p-6"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          {/* Номер маршруту */}
+                          <div className="flex items-center gap-2 mb-2">
+                            <span
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold ${getTypeColor(
+                                type
+                              )}`}
+                            >
+                              {route.number || route.route_number}
                             </span>
+                            {route.is_active === false && (
+                              <span className="text-xs text-gray-500">
+                                Неактивний
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Назва маршруту */}
+                          <h3 className="text-lg font-semibold text-gray-900 hover:text-primary">
+                            {route.name ||
+                              route.route_name ||
+                              `Маршрут ${route.number || route.route_number}`}
+                          </h3>
+
+                          {/* Опис */}
+                          {route.description && (
+                            <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+                              {route.description}
+                            </p>
+                          )}
+
+                          {/* Інформація про зупинки */}
+                          {route.stops && (
+                            <div className="mt-4 flex items-center text-sm text-gray-500">
+                              <Route className="h-4 w-4 mr-2" />
+                              <span>{route.stops.length} зупинок</span>
+                            </div>
                           )}
                         </div>
-
-                        {/* Назва маршруту */}
-                        <h3 className="text-lg font-semibold text-gray-900 hover:text-primary">
-                          {route.name || route.route_name || `Маршрут ${route.number || route.route_number}`}
-                        </h3>
-
-                        {/* Опис */}
-                        {route.description && (
-                          <p className="mt-2 text-sm text-gray-600 line-clamp-2">
-                            {route.description}
-                          </p>
-                        )}
-
-                        {/* Інформація про зупинки */}
-                        {route.stops && (
-                          <div className="mt-4 flex items-center text-sm text-gray-500">
-                            <Route className="h-4 w-4 mr-2" />
-                            <span>{route.stops.length} зупинок</span>
-                          </div>
-                        )}
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
   );
 }
-
