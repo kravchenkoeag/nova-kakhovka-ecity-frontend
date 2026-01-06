@@ -37,22 +37,22 @@ export class PollsApi {
     return this.client.get(`/api/v1/polls/${id}/results`, token);
   }
 
-  // Створити опитування (admin)
+  // Створити опитування
   async create(data: CreatePollRequest, token: string): Promise<Poll> {
-    return this.client.post<Poll>("/api/v1/admin/polls", data, token);
+    return this.client.post<Poll>("/api/v1/polls", data, token);
   }
 
-  // Опублікувати опитування (admin)
-  async publish(id: string, token: string): Promise<{ message: string }> {
-    return this.client.put(
-      `/api/v1/admin/polls/${id}/publish`,
-      undefined,
-      token,
-    );
+  // Оновити опитування
+  async update(
+    id: string,
+    data: Partial<CreatePollRequest>,
+    token: string,
+  ): Promise<{ message: string }> {
+    return this.client.put(`/api/v1/polls/${id}`, data, token);
   }
 
-  // Закрити опитування (admin)
-  async close(id: string, token: string): Promise<{ message: string }> {
-    return this.client.put(`/api/v1/admin/polls/${id}/close`, undefined, token);
+  // Видалити опитування
+  async delete(id: string, token: string): Promise<{ message: string }> {
+    return this.client.delete(`/api/v1/polls/${id}`, token);
   }
 }

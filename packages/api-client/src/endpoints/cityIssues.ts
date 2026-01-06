@@ -48,6 +48,15 @@ export class CityIssuesApi {
     return this.client.post<CityIssue>("/api/v1/city-issues", data, token);
   }
 
+  // Оновити проблему міста
+  async update(
+    id: string,
+    data: Partial<CreateCityIssueRequest>,
+    token: string,
+  ): Promise<{ message: string }> {
+    return this.client.put(`/api/v1/city-issues/${id}`, data, token);
+  }
+
   // Проголосувати за проблему (upvote)
   async upvote(id: string, token: string): Promise<{ message: string }> {
     return this.client.post(

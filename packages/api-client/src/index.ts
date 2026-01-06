@@ -11,7 +11,10 @@ import { PollsApi } from "./endpoints/polls";
 import { CityIssuesApi } from "./endpoints/cityIssues";
 import { TransportApi } from "./endpoints/transport";
 import { NotificationsApi } from "./endpoints/notifications";
-import { UsersApi } from "./endpoints/users"; // NEW
+import { UsersApi } from "./endpoints/users";
+import { SearchApi } from "./endpoints/search";
+import { StatsApi } from "./endpoints/stats";
+import { ModerationApi } from "./endpoints/moderation";
 
 /**
  * Головний клієнт API для Nova Kakhovka e-City
@@ -33,7 +36,10 @@ export class EcityApiClient {
   public cityIssues: CityIssuesApi;
   public transport: TransportApi;
   public notifications: NotificationsApi;
-  public users: UsersApi; // NEW
+  public users: UsersApi;
+  public search: SearchApi;
+  public stats: StatsApi;
+  public moderation: ModerationApi;
 
   /**
    * @param baseUrl - базова URL backend API
@@ -52,7 +58,10 @@ export class EcityApiClient {
     this.cityIssues = new CityIssuesApi(this.client);
     this.transport = new TransportApi(this.client);
     this.notifications = new NotificationsApi(this.client);
-    this.users = new UsersApi(this.client); // NEW
+    this.users = new UsersApi(this.client);
+    this.search = new SearchApi(this.client);
+    this.stats = new StatsApi(this.client);
+    this.moderation = new ModerationApi(this.client);
   }
 
   /**
@@ -109,7 +118,10 @@ export { PollsApi } from "./endpoints/polls";
 export { CityIssuesApi } from "./endpoints/cityIssues";
 export { TransportApi } from "./endpoints/transport";
 export { NotificationsApi } from "./endpoints/notifications";
-export { UsersApi } from "./endpoints/users"; // NEW
+export { UsersApi } from "./endpoints/users";
+export { SearchApi } from "./endpoints/search";
+export { StatsApi } from "./endpoints/stats";
+export { ModerationApi } from "./endpoints/moderation";
 
 // Експорт типів з endpoints
 export type * from "./endpoints/auth";
@@ -121,4 +133,7 @@ export type * from "./endpoints/polls";
 export type * from "./endpoints/cityIssues";
 export type * from "./endpoints/transport";
 export type * from "./endpoints/notifications";
-export type * from "./endpoints/users"; // NEW
+export type * from "./endpoints/users";
+export type * from "./endpoints/search";
+export type * from "./endpoints/stats";
+export type * from "./endpoints/moderation";

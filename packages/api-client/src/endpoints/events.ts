@@ -39,6 +39,17 @@ export class EventsApi {
     return this.client.get<Event>(`/api/v1/events/${id}`);
   }
 
+  // Отримати події поблизу локації
+  async getNearby(
+    lat: number,
+    lng: number,
+    radius = 5000,
+  ): Promise<{ events: Event[]; count: number; location: any }> {
+    return this.client.get<{ events: Event[]; count: number; location: any }>(
+      `/api/v1/events/nearby?lat=${lat}&lng=${lng}&radius=${radius}`,
+    );
+  }
+
   // Створити нову подію
   async create(data: CreateEventRequest, token: string): Promise<Event> {
     return this.client.post<Event>("/api/v1/events", data, token);
@@ -58,9 +69,14 @@ export class EventsApi {
     return this.client.delete(`/api/v1/events/${id}`, token);
   }
 
-  // Приєднатися до події
+  // Приєднатися до події (attend)
+  async attend(id: string, token: string): Promise<{ message: string }> {
+    return this.client.post(`/api/v1/events/${id}/attend`, undefined, token);
+  }
+
+  // Приєднатися до події (legacy alias для зворотньої сумісності)
   async join(id: string, token: string): Promise<{ message: string }> {
-    return this.client.post(`/api/v1/events/${id}/join`, undefined, token);
+    return this.attend(id, token);
   }
 
   // Покинути подію

@@ -106,7 +106,6 @@ export class UsersApi {
   }
 
   // Метод для розблокування користувача
-
   async unblock(
     userId: string,
   ): Promise<{ message: string; user_id: string; is_blocked: boolean }> {
@@ -114,9 +113,48 @@ export class UsersApi {
       message: string;
       user_id: string;
       is_blocked: boolean;
-    }>(`/api/v1/users/${userId}/block`, {
-      is_blocked: false,
-    });
+    }>(`/api/v1/users/${userId}/unblock`, undefined);
+  }
+
+  // Оновити користувача (admin)
+  async update(
+    userId: string,
+    data: {
+      full_name?: string;
+      phone?: string;
+      date_of_birth?: string;
+      gender?: string;
+      address?: string;
+    },
+    token: string,
+  ): Promise<{ message: string }> {
+    return this.client.put(`/api/v1/users/${userId}`, data, token);
+  }
+
+  // Видалити користувача (admin - soft delete)
+  async delete(userId: string, token: string): Promise<{ message: string }> {
+    return this.client.delete(`/api/v1/users/${userId}`, token);
+  }
+
+  // Верифікувати користувача (admin)
+  async verify(
+    userId: string,
+    token: string,
+  ): Promise<{ message: string }> {
+    return this.client.put(`/api/v1/users/${userId}/verify`, undefined, token);
+  }
+
+  // Оновити роль користувача (admin)
+  async updateRole(
+    userId: string,
+    role: "USER" | "MODERATOR" | "ADMIN",
+    token: string,
+  ): Promise<{ message: string; role: string }> {
+    return this.client.put<{ message: string; role: string }>(
+      `/api/v1/users/${userId}/role`,
+      { role },
+      token,
+    );
   }
 
   //@deprecated Використовуйте block() або unblock() замість цього методу

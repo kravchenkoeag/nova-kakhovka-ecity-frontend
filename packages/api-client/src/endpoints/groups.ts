@@ -35,4 +35,45 @@ export class GroupsApi {
   async leave(id: string, token: string): Promise<{ message: string }> {
     return this.client.post(`/api/v1/groups/${id}/leave`, undefined, token);
   }
+
+  // Оновити групу
+  async update(
+    id: string,
+    data: Partial<CreateGroupRequest>,
+    token: string,
+  ): Promise<Group> {
+    return this.client.put<Group>(`/api/v1/groups/${id}`, data, token);
+  }
+
+  // Видалити групу
+  async delete(id: string, token: string): Promise<{ message: string }> {
+    return this.client.delete(`/api/v1/groups/${id}`, token);
+  }
+
+  // Відправити повідомлення в групу
+  async sendMessage(
+    id: string,
+    data: {
+      content: string;
+      type: "text" | "image" | "video" | "file" | "link";
+      media_url?: string;
+      reply_to_id?: string;
+    },
+    token: string,
+  ): Promise<any> {
+    return this.client.post(`/api/v1/groups/${id}/messages`, data, token);
+  }
+
+  // Отримати повідомлення групи
+  async getMessages(
+    id: string,
+    token: string,
+    page = 1,
+    limit = 50,
+  ): Promise<any[]> {
+    return this.client.get<any[]>(
+      `/api/v1/groups/${id}/messages?page=${page}&limit=${limit}`,
+      token,
+    );
+  }
 }

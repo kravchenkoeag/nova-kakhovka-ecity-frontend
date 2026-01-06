@@ -53,12 +53,16 @@ export class PetitionsApi {
     return this.client.post(`/api/v1/petitions/${id}/sign`, data, token);
   }
 
-  // Опублікувати петицію (admin)
-  async publish(id: string, token: string): Promise<{ message: string }> {
-    return this.client.put(`/api/v1/petitions/${id}/publish`, undefined, token);
+  // Оновити петицію
+  async update(
+    id: string,
+    data: Partial<CreatePetitionRequest>,
+    token: string,
+  ): Promise<{ message: string }> {
+    return this.client.put(`/api/v1/petitions/${id}`, data, token);
   }
 
-  // Видалити петицію (admin)
+  // Видалити петицію (author/moderator)
   async delete(id: string, token: string): Promise<{ message: string }> {
     return this.client.delete(`/api/v1/petitions/${id}`, token);
   }
