@@ -1,8 +1,8 @@
 // packages/types/src/index.ts
 
 // Models
-export * from "./models/user";
 export * from "./models/roles";
+export * from "./models/user";
 export * from "./models/group";
 export * from "./models/event";
 export * from "./models/announcement";

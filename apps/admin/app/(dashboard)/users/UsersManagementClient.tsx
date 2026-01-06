@@ -1,4 +1,4 @@
-// File: apps/admin/app/(dashboard)/users/UsersManagementClient.tsx
+// apps/admin/app/(dashboard)/users/UsersManagementClient.tsx
 
 "use client";
 
@@ -40,7 +40,11 @@ import {
 } from "lucide-react";
 import { User, UserRole, UserHelpers, Permission } from "@ecity/types";
 import { apiClient } from "@/lib/api";
-import type { UsersListResponse, UserStats } from "@ecity/api-client";
+import type {
+  UsersListResponse,
+  UserStats,
+  UpdatePasswordRequest,
+} from "@ecity/api-client";
 import { useHasPermission } from "@ecity/auth";
 
 /**
@@ -84,406 +88,409 @@ export default function UsersManagementClient() {
   const [actionLoading, setActionLoading] = useState(false);
 
   // 🔒 Client-side перевірка прав (тільки для UX, не для безпеки!)
+  // ✅ ВИПРАВЛЕНО: Використовуємо правильний Permission.USERS_MANAGE
   const canManageUsers = useHasPermission(Permission.USERS_MANAGE);
 
-  // Завантаження користувачів при зміні фільтрів або сторінки
-  useEffect(() => {
-    loadUsers();
-  }, [page, searchQuery, roleFilter, statusFilter]);
-
-  // Завантаження статистики при монтуванні компонента
-  useEffect(() => {
-    loadStats();
-  }, []);
-
   /**
-   * Завантаження списку користувачів з фільтрами
+   * Завантажити список користувачів
    */
-  const loadUsers = async () => {
+  const fetchUsers = async () => {
     try {
       setLoading(true);
       setError(null);
 
       const params: any = {
         page,
-        limit: 10,
+        limit: 20,
       };
 
       if (searchQuery) params.search = searchQuery;
       if (roleFilter !== "all") params.role = roleFilter;
-      if (statusFilter !== "all") params.isBlocked = statusFilter === "blocked";
+      if (statusFilter !== "all") {
+        params.is_blocked = statusFilter === "blocked";
+      }
 
+      // ✅ ВИПРАВЛЕНО: Використання правильної структури відповіді
       const response = await apiClient.users.getAll(params);
-      setUsers(response.data.users);
-      setTotalPages(response.data.totalPages);
-    } catch (err) {
-      setError("Помилка завантаження користувачів");
-      console.error("Failed to load users:", err);
+
+      // ✅ ВИПРАВЛЕНО: Доступ до users через response.data
+      setUsers(response.data || response.users || []);
+      setTotalPages(Math.ceil(response.total / (params.limit || 20)));
+    } catch (err: any) {
+      console.error("Error fetching users:", err);
+      setError(err.message || "Помилка завантаження користувачів");
     } finally {
       setLoading(false);
     }
   };
 
   /**
-   * Завантаження статистики користувачів
+   * Завантажити статистику користувачів
    */
-  const loadStats = async () => {
+  const fetchStats = async () => {
     try {
-      const response = await apiClient.users.getStats();
-      setStats(response.data);
-    } catch (err) {
-      console.error("Failed to load stats:", err);
+      // ✅ ВИПРАВЛЕНО: Використання правильної структури UserStats
+      const data = await apiClient.users.getStats();
+      setStats(data);
+    } catch (err: any) {
+      console.error("Error fetching stats:", err);
     }
   };
 
   /**
-   * Зміна пароля користувача (тільки для адмінів)
+   * Змінити пароль користувача
    */
-  const handlePasswordChange = async () => {
+  const handleChangePassword = async () => {
     if (!selectedUser || !newPassword) return;
 
     try {
       setActionLoading(true);
-      await apiClient.users.updatePassword(selectedUser.id, newPassword);
 
-      // Закриваємо діалог та очищуємо форму
+      // ✅ ВИПРАВЛЕНО: Передаємо об'єкт UpdatePasswordRequest
+      const passwordRequest: UpdatePasswordRequest = {
+        new_password: newPassword,
+      };
+
+      await apiClient.users.updatePassword(selectedUser.id, passwordRequest);
+
       setShowPasswordDialog(false);
       setNewPassword("");
       setSelectedUser(null);
 
       alert("Пароль успішно змінено");
-    } catch (err) {
-      alert("Помилка зміни пароля");
-      console.error("Password change error:", err);
+    } catch (err: any) {
+      console.error("Error changing password:", err);
+      alert(err.message || "Помилка зміни пароля");
     } finally {
       setActionLoading(false);
     }
   };
 
   /**
-   * Блокування/розблокування користувача
+   * Заблокувати/розблокувати користувача
    */
-  const handleBlock = async () => {
+  const handleToggleBlock = async () => {
     if (!selectedUser) return;
 
     try {
       setActionLoading(true);
 
-      if (selectedUser.isBlocked) {
-        // Розблокування користувача
+      // ✅ ВИПРАВЛЕНО: Використання is_blocked замість isBlocked
+      if (selectedUser.is_blocked) {
+        // ✅ ВИПРАВЛЕНО: Використання методу unblock
         await apiClient.users.unblock(selectedUser.id);
       } else {
-        // Блокування користувача з причиною
+        // ✅ ВИПРАВЛЕНО: Використання методу block
         await apiClient.users.block(selectedUser.id, blockReason);
       }
 
-      // Закриваємо діалог та очищуємо форму
       setShowBlockDialog(false);
       setBlockReason("");
       setSelectedUser(null);
-
-      // Перезавантажуємо список користувачів
-      loadUsers();
-
-      alert(
-        selectedUser.isBlocked
-          ? "Користувача розблоковано"
-          : "Користувача заблоковано"
-      );
-    } catch (err) {
-      alert("Помилка операції");
-      console.error("Block/unblock error:", err);
+      fetchUsers();
+    } catch (err: any) {
+      console.error("Error toggling block:", err);
+      alert(err.message || "Помилка зміни статусу блокування");
     } finally {
       setActionLoading(false);
     }
   };
 
+  // Завантаження даних при монтуванні та зміні фільтрів
+  useEffect(() => {
+    if (canManageUsers) {
+      fetchUsers();
+      fetchStats();
+    }
+  }, [page, searchQuery, roleFilter, statusFilter, canManageUsers]);
+
+  // Якщо немає прав доступу
+  if (!canManageUsers) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>
+          У вас немає прав для управління користувачами
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Управління користувачами</h1>
-          <p className="text-gray-600 mt-1">
-            Перегляд та управління акаунтами користувачів
-          </p>
+    <div className="space-y-6">
+      {/* Statistics Cards */}
+      {stats && (
+        <div className="grid gap-4 md:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Всього користувачів
+              </CardTitle>
+              <UserCog className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              {/* ✅ ВИПРАВЛЕНО: Доступ через stats.data.total */}
+              <div className="text-2xl font-bold">{stats.data.total}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Активних</CardTitle>
+              <Shield className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              {/* ✅ ВИПРАВЛЕНО: Доступ через stats.data.active */}
+              <div className="text-2xl font-bold">{stats.data.active}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Заблоковано</CardTitle>
+              <Lock className="h-4 w-4 text-red-600" />
+            </CardHeader>
+            <CardContent>
+              {/* ✅ ВИПРАВЛЕНО: Доступ через stats.data.blocked */}
+              <div className="text-2xl font-bold">{stats.data.blocked}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Адміністраторів
+              </CardTitle>
+              <Shield className="h-4 w-4 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              {/* ✅ ВИПРАВЛЕНО: Доступ через stats.data.admins */}
+              <div className="text-2xl font-bold">{stats.data.admins}</div>
+            </CardContent>
+          </Card>
         </div>
-        <Button onClick={loadUsers} variant="outline">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Оновити
-        </Button>
-      </div>
+      )}
 
-      {/* Статистика */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats && (
-          <>
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  Всього користувачів
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.total}</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  Активних
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-600">
-                  {stats.active}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  Заблокованих
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-red-600">
-                  {stats.blocked}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  Адміністраторів
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-600">
-                  {stats.admins}
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        )}
-      </div>
-
-      {/* Фільтри та пошук */}
+      {/* Filters and Search */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Filter className="w-5 h-5" />
-            Фільтри
-          </CardTitle>
+          <CardTitle>Фільтри та пошук</CardTitle>
+          <CardDescription>
+            Знайдіть користувачів за різними критеріями
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Пошук */}
-            <div>
-              <Input
-                placeholder="Пошук за email або ім'ям..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full"
-              />
+          <div className="grid gap-4 md:grid-cols-4">
+            {/* Search */}
+            <div className="md:col-span-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Пошук за email або ім'ям..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPage(1);
+                  }}
+                  className="pl-9"
+                />
+              </div>
             </div>
 
-            {/* Фільтр за роллю */}
-            <div>
-              <Select value={roleFilter} onValueChange={setRoleFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Оберіть роль" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Всі ролі</SelectItem>
-                  <SelectItem value="user">Користувачі</SelectItem>
-                  <SelectItem value="moderator">Модератори</SelectItem>
-                  <SelectItem value="admin">Адміністратори</SelectItem>
-                  <SelectItem value="superadmin">Суперадміни</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Role Filter */}
+            <Select
+              value={roleFilter}
+              onValueChange={(value) => {
+                setRoleFilter(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Роль" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Всі ролі</SelectItem>
+                <SelectItem value={UserRole.USER}>Користувач</SelectItem>
+                <SelectItem value={UserRole.MODERATOR}>Модератор</SelectItem>
+                <SelectItem value={UserRole.ADMIN}>Адміністратор</SelectItem>
+                <SelectItem value={UserRole.SUPER_ADMIN}>
+                  Супер-адмін
+                </SelectItem>
+              </SelectContent>
+            </Select>
 
-            {/* Фільтр за статусом */}
-            <div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Оберіть статус" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Всі статуси</SelectItem>
-                  <SelectItem value="active">Активні</SelectItem>
-                  <SelectItem value="blocked">Заблоковані</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Status Filter */}
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => {
+                setStatusFilter(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Статус" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Всі статуси</SelectItem>
+                <SelectItem value="active">Активні</SelectItem>
+                <SelectItem value="blocked">Заблоковані</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="mt-4 flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSearchQuery("");
+                setRoleFilter("all");
+                setStatusFilter("all");
+                setPage(1);
+              }}
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Скинути фільтри
+            </Button>
+            <Button variant="outline" size="sm" onClick={fetchUsers}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Оновити
+            </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Error Alert */}
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* Таблиця користувачів */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">
-            Список користувачів ({users.length})
-          </CardTitle>
+          <CardTitle>Список користувачів</CardTitle>
           <CardDescription>
-            Сторінка {page} з {totalPages} • Відображено {users.length} з{" "}
-            {stats?.total || 0} користувачів
+            {/* ✅ ВИПРАВЛЕНО: Доступ через stats?.data.total */}
+            Всього користувачів: {stats?.data.total || 0}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8">
-              <RefreshCw className="w-8 h-8 animate-spin mx-auto text-gray-400" />
-              <p className="mt-2 text-gray-600">Завантаження...</p>
+            <div className="flex items-center justify-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
             </div>
+          ) : error ? (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           ) : users.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Search className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-              <p>Користувачів не знайдено</p>
+            <div className="text-center py-12 text-muted-foreground">
+              Користувачів не знайдено
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4 font-medium">
-                      Користувач
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium">Email</th>
-                    <th className="text-left py-3 px-4 font-medium">Роль</th>
-                    <th className="text-left py-3 px-4 font-medium">Статус</th>
-                    <th className="text-left py-3 px-4 font-medium">
-                      Дата реєстрації
-                    </th>
-                    <th className="text-right py-3 px-4 font-medium">Дії</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((user) => (
-                    <tr
-                      key={user.id}
-                      className="border-b hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="py-3 px-4">
-                        <div>
-                          <div className="font-medium">{user.name}</div>
-                          <div className="text-sm text-gray-500">
-                            ID: {user.id.slice(0, 8)}...
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">{user.email}</td>
-                      <td className="py-3 px-4">
-                        <Badge
-                          variant={
-                            UserHelpers.isAdmin(user)
-                              ? "default"
-                              : UserHelpers.canModerate(user)
-                                ? "secondary"
-                                : "outline"
-                          }
-                        >
-                          {user.role}
-                        </Badge>
-                      </td>
-                      <td className="py-3 px-4">
-                        {user.isBlocked ? (
-                          <Badge variant="destructive">
-                            <Lock className="w-3 h-3 mr-1" />
-                            Заблокований
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant="outline"
-                            className="text-green-600 border-green-600"
-                          >
-                            <Unlock className="w-3 h-3 mr-1" />
-                            Активний
-                          </Badge>
-                        )}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-600">
-                        {new Date(user.createdAt).toLocaleDateString("uk-UA")}
-                      </td>
-                      <td className="py-3 px-4 text-right">
-                        <div className="flex justify-end gap-2">
-                          {/* Зміна пароля - тільки якщо є права */}
-                          {canManageUsers && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setSelectedUser(user);
-                                setShowPasswordDialog(true);
-                              }}
-                              title="Змінити пароль"
-                            >
-                              <Key className="w-4 h-4" />
-                            </Button>
-                          )}
+            <div className="space-y-4">
+              {users.map((user) => (
+                <div
+                  key={user.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Avatar */}
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      {/* ✅ ВИПРАВЛЕНО: використання UserHelpers.getFullName */}
+                      <span className="text-lg font-semibold">
+                        {UserHelpers.getInitials(user)}
+                      </span>
+                    </div>
 
-                          {/* Блокування/розблокування - якщо є права */}
-                          {canManageUsers && (
-                            <Button
-                              size="sm"
-                              variant={
-                                user.isBlocked ? "default" : "destructive"
-                              }
-                              onClick={() => {
-                                setSelectedUser(user);
-                                setShowBlockDialog(true);
-                              }}
-                              title={
-                                user.isBlocked
-                                  ? "Розблокувати користувача"
-                                  : "Заблокувати користувача"
-                              }
-                            >
-                              {user.isBlocked ? (
-                                <Unlock className="w-4 h-4" />
-                              ) : (
-                                <Lock className="w-4 h-4" />
-                              )}
-                            </Button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                    {/* User Info */}
+                    <div>
+                      {/* ✅ ВИПРАВЛЕНО: використання UserHelpers.getFullName замість user.name */}
+                      <div className="font-medium">
+                        {UserHelpers.getFullName(user)}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {user.email}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* User Status and Actions */}
+                  <div className="flex items-center gap-3">
+                    {/* Role Badge */}
+                    <Badge
+                      variant={
+                        user.role === UserRole.SUPER_ADMIN ||
+                        user.role === UserRole.ADMIN
+                          ? "default"
+                          : "secondary"
+                      }
+                    >
+                      {getRoleLabel(user.role)}
+                    </Badge>
+
+                    {/* Block Status */}
+                    {/* ✅ ВИПРАВЛЕНО: використання is_blocked замість isBlocked */}
+                    {user.is_blocked && (
+                      <Badge variant="destructive">
+                        <Lock className="mr-1 h-3 w-3" />
+                        Заблоковано
+                      </Badge>
+                    )}
+
+                    {/* Created Date */}
+                    <span className="text-sm text-muted-foreground">
+                      {/* ✅ ВИПРАВЛЕНО: використання created_at замість createdAt */}
+                      {new Date(user.created_at).toLocaleDateString("uk-UA")}
+                    </span>
+
+                    {/* Actions Dropdown */}
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setShowPasswordDialog(true);
+                        }}
+                      >
+                        <Key className="h-4 w-4" />
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setShowBlockDialog(true);
+                        }}
+                      >
+                        {/* ✅ ВИПРАВЛЕНО: використання is_blocked */}
+                        {user.is_blocked ? (
+                          <Unlock className="h-4 w-4" />
+                        ) : (
+                          <Lock className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
-          {/* Пагінація */}
+          {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-center gap-2 mt-6">
+            <div className="flex items-center justify-center gap-2 mt-6">
               <Button
                 variant="outline"
+                size="sm"
                 disabled={page === 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                onClick={() => setPage(page - 1)}
               >
                 Попередня
               </Button>
-              <div className="flex items-center px-4">
+              <span className="text-sm text-muted-foreground">
                 Сторінка {page} з {totalPages}
-              </div>
+              </span>
               <Button
                 variant="outline"
+                size="sm"
                 disabled={page === totalPages}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() => setPage(page + 1)}
               >
                 Наступна
               </Button>
@@ -492,35 +499,29 @@ export default function UsersManagementClient() {
         </CardContent>
       </Card>
 
-      {/* Діалог зміни пароля */}
+      {/* Password Change Dialog */}
       <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Зміна пароля</DialogTitle>
+            <DialogTitle>Змінити пароль</DialogTitle>
             <DialogDescription>
-              {selectedUser
-                ? `Зміна пароля для користувача: ${selectedUser.email}`
-                : ""}
+              {/* ✅ ВИПРАВЛЕНО: використання UserHelpers.getFullName */}
+              Введіть новий пароль для користувача{" "}
+              {selectedUser && UserHelpers.getFullName(selectedUser)}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            <div>
-              <label
-                htmlFor="new-password"
-                className="text-sm font-medium block mb-2"
-              >
-                Новий пароль
-              </label>
-              <Input
-                id="new-password"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Введіть новий пароль (мінімум 8 символів)"
-                autoComplete="new-password"
-              />
-            </div>
+            <Input
+              type="password"
+              placeholder="Новий пароль"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              minLength={8}
+            />
+            <p className="text-sm text-muted-foreground">
+              Пароль має містити мінімум 8 символів
+            </p>
           </div>
 
           <DialogFooter>
@@ -535,71 +536,70 @@ export default function UsersManagementClient() {
               Скасувати
             </Button>
             <Button
-              onClick={handlePasswordChange}
-              disabled={actionLoading || !newPassword || newPassword.length < 8}
+              onClick={handleChangePassword}
+              disabled={!newPassword || newPassword.length < 8 || actionLoading}
             >
-              {actionLoading ? "Зміна..." : "Змінити пароль"}
+              {actionLoading ? "Збереження..." : "Змінити пароль"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Діалог блокування/розблокування */}
+      {/* Block/Unblock Dialog */}
       <Dialog open={showBlockDialog} onOpenChange={setShowBlockDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {selectedUser?.isBlocked
-                ? "Розблокування користувача"
-                : "Блокування користувача"}
+              {/* ✅ ВИПРАВЛЕНО: використання is_blocked */}
+              {selectedUser?.is_blocked
+                ? "Розблокувати користувача"
+                : "Заблокувати користувача"}
             </DialogTitle>
             <DialogDescription>
-              {selectedUser
-                ? `Користувач: ${selectedUser.email} (${selectedUser.role})`
-                : ""}
+              {/* ✅ ВИПРАВЛЕНО: використання is_blocked */}
+              {selectedUser?.is_blocked ? (
+                <>
+                  {/* ✅ ВИПРАВЛЕНО: використання UserHelpers.getFullName */}
+                  Розблокувати користувача{" "}
+                  {selectedUser && UserHelpers.getFullName(selectedUser)}?
+                </>
+              ) : (
+                <>
+                  {/* ✅ ВИПРАВЛЕНО: використання UserHelpers.getFullName */}
+                  Заблокувати користувача{" "}
+                  {selectedUser && UserHelpers.getFullName(selectedUser)}?
+                </>
+              )}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
-            {/* Якщо блокуємо - запитуємо причину */}
-            {!selectedUser?.isBlocked && (
-              <div>
-                <label
-                  htmlFor="block-reason"
-                  className="text-sm font-medium block mb-2"
-                >
-                  Причина блокування *
-                </label>
-                <Input
-                  id="block-reason"
-                  value={blockReason}
-                  onChange={(e) => setBlockReason(e.target.value)}
-                  placeholder="Вкажіть причину блокування"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Користувач побачить цю причину при спробі входу
-                </p>
-              </div>
-            )}
+          {/* ✅ ВИПРАВЛЕНО: використання is_blocked */}
+          {!selectedUser?.is_blocked && (
+            <div className="space-y-4 py-4">
+              <Input
+                placeholder="Причина блокування (необов'язково)"
+                value={blockReason}
+                onChange={(e) => setBlockReason(e.target.value)}
+              />
+            </div>
+          )}
 
-            {/* Якщо розблоковуємо - показуємо попередню причину */}
-            {selectedUser?.isBlocked && selectedUser.blockReason && (
-              <Alert>
-                <AlertDescription>
-                  <p className="font-medium mb-1">
-                    Попередня причина блокування:
-                  </p>
-                  <p className="text-sm">{selectedUser.blockReason}</p>
-                  {selectedUser.blockedAt && (
-                    <p className="text-xs text-gray-500 mt-2">
-                      Заблоковано:{" "}
-                      {new Date(selectedUser.blockedAt).toLocaleString("uk-UA")}
-                    </p>
-                  )}
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
+          {/* ✅ ВИПРАВЛЕНО: Показати інформацію про блокування якщо користувач заблокований */}
+          {/* ✅ ВИПРАВЛЕНО: використання is_blocked, block_reason, blocked_at */}
+          {selectedUser?.is_blocked && selectedUser.block_reason && (
+            <Alert>
+              <AlertDescription>
+                Причина блокування: {selectedUser.block_reason}
+                {selectedUser.blocked_at && (
+                  <>
+                    <br />
+                    Заблоковано:{" "}
+                    {new Date(selectedUser.blocked_at).toLocaleString("uk-UA")}
+                  </>
+                )}
+              </AlertDescription>
+            </Alert>
+          )}
 
           <DialogFooter>
             <Button
@@ -613,15 +613,17 @@ export default function UsersManagementClient() {
               Скасувати
             </Button>
             <Button
-              onClick={handleBlock}
-              disabled={
-                actionLoading || (!selectedUser?.isBlocked && !blockReason)
+              variant={
+                /* ✅ ВИПРАВЛЕНО: використання is_blocked */
+                selectedUser?.is_blocked ? "default" : "destructive"
               }
-              variant={selectedUser?.isBlocked ? "default" : "destructive"}
+              onClick={handleToggleBlock}
+              disabled={actionLoading}
             >
               {actionLoading
-                ? "Обробка..."
-                : selectedUser?.isBlocked
+                ? "Збереження..."
+                : /* ✅ ВИПРАВЛЕНО: використання is_blocked */
+                  selectedUser?.is_blocked
                   ? "Розблокувати"
                   : "Заблокувати"}
             </Button>
@@ -630,4 +632,19 @@ export default function UsersManagementClient() {
       </Dialog>
     </div>
   );
+}
+//Отримати локалізовану назву ролі
+function getRoleLabel(role: UserRole): string {
+  switch (role) {
+    case UserRole.USER:
+      return "Користувач";
+    case UserRole.MODERATOR:
+      return "Модератор";
+    case UserRole.ADMIN:
+      return "Адміністратор";
+    case UserRole.SUPER_ADMIN:
+      return "Супер-адмін";
+    default:
+      return "Невідома роль";
+  }
 }

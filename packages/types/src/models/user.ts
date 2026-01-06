@@ -1,12 +1,6 @@
 //  packages/types/src/models/user.ts
 
-// Ролі користувачів
-export enum UserRole {
-  USER = "USER",
-  MODERATOR = "MODERATOR",
-  ADMIN = "ADMIN",
-  SUPER_ADMIN = "SUPER_ADMIN",
-}
+import { UserRole } from "./roles";
 
 // Статус користувача
 export interface UserStatus {

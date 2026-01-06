@@ -12,9 +12,10 @@ export interface GetUsersParams {
   is_blocked?: boolean;
 }
 
-// Відповідь зі списком користувачів
+//  Відповідь зі списком користувачів тепер має поле data
 export interface UsersListResponse {
-  users: User[];
+  data: User[]; //  основні дані в полі data
+  users: User[]; // Legacy підтримка для зворотньої сумісності
   total: number;
   page: number;
   limit: number;
@@ -32,22 +33,23 @@ export interface BlockUserRequest {
   reason?: string;
 }
 
-// Статистика користувачів
-
+// Статистика користувачів з правильною структурою
 export interface UserStats {
-  total_users: number;
-  blocked_users: number;
-  verified_users: number;
-  moderators: number;
-  administrators: number;
-  active_users: number;
+  data: {
+    total: number;
+    active: number;
+    blocked: number;
+    admins: number;
+    verified_users: number;
+    moderators: number;
+  };
 }
 
-/// API для роботи з користувачами (тільки для модераторів/адміністраторів)
+// API для роботи з користувачами (тільки для модераторів/адміністраторів)
 export class UsersApi {
   constructor(private client: ApiClient) {}
 
-  // Отримати список всіх користувачів з пагінацією та фільтрацією
+  //Отримати список всіх користувачів з пагінацією та фільтрацією
 
   async getAll(params?: GetUsersParams): Promise<UsersListResponse> {
     const queryParams = new URLSearchParams();
@@ -66,12 +68,17 @@ export class UsersApi {
     return this.client.get<UsersListResponse>(url);
   }
 
-  // Отримати користувача за ID
+  //Отримати користувача за ID
+
   async getById(userId: string): Promise<{ user: User }> {
     return this.client.get<{ user: User }>(`/api/v1/users/${userId}`);
   }
 
-  // Змінити пароль користувача (тільки для адміністраторів)
+  /**
+   * Змінити пароль користувача (тільки для адміністраторів)
+   *
+   * 🔒 Захист: Server-Side перевірка прав на backend
+   */
   async updatePassword(
     userId: string,
     data: UpdatePasswordRequest
@@ -82,19 +89,51 @@ export class UsersApi {
     );
   }
 
-  // Заблокувати або розблокувати користувача
-  async blockUser(
+  //  Метод для блокування користувача
+
+  async block(
     userId: string,
-    data: BlockUserRequest
+    reason?: string
   ): Promise<{ message: string; user_id: string; is_blocked: boolean }> {
     return this.client.put<{
       message: string;
       user_id: string;
       is_blocked: boolean;
-    }>(`/api/v1/users/${userId}/block`, data);
+    }>(`/api/v1/users/${userId}/block`, {
+      is_blocked: true,
+      reason,
+    });
+  }
+
+  // Метод для розблокування користувача
+
+  async unblock(
+    userId: string
+  ): Promise<{ message: string; user_id: string; is_blocked: boolean }> {
+    return this.client.put<{
+      message: string;
+      user_id: string;
+      is_blocked: boolean;
+    }>(`/api/v1/users/${userId}/block`, {
+      is_blocked: false,
+    });
+  }
+
+  //@deprecated Використовуйте block() або unblock() замість цього методу
+
+  async blockUser(
+    userId: string,
+    data: BlockUserRequest
+  ): Promise<{ message: string; user_id: string; is_blocked: boolean }> {
+    if (data.is_blocked) {
+      return this.block(userId, data.reason);
+    } else {
+      return this.unblock(userId);
+    }
   }
 
   // Отримати статистику користувачів
+
   async getStats(): Promise<UserStats> {
     return this.client.get<UserStats>("/api/v1/users/stats");
   }

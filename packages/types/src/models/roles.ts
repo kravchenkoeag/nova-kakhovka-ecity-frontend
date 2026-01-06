@@ -43,6 +43,8 @@ export enum Permission {
 
   // Admin permissions
   MANAGE_USERS = "manage:users",
+  USERS_MANAGE = "users:manage",
+
   BLOCK_USER = "block:user",
   VERIFY_USER = "verify:user",
   PROMOTE_MODERATOR = "promote:moderator",
@@ -88,6 +90,7 @@ const MODERATOR_PERMISSIONS: Permission[] = [
 
 const ADMIN_PERMISSIONS: Permission[] = [
   Permission.MANAGE_USERS,
+  Permission.USERS_MANAGE, // ✅ ДОДАНО
   Permission.BLOCK_USER,
   Permission.VERIFY_USER,
   Permission.PROMOTE_MODERATOR,
@@ -103,17 +106,15 @@ const SUPER_ADMIN_PERMISSIONS: Permission[] = [
   Permission.MANAGE_ROLES,
 ];
 
+// Combine permissions hierarchically
 export const RolePermissions: Record<UserRole, Permission[]> = {
   [UserRole.USER]: USER_PERMISSIONS,
-
   [UserRole.MODERATOR]: [...USER_PERMISSIONS, ...MODERATOR_PERMISSIONS],
-
   [UserRole.ADMIN]: [
     ...USER_PERMISSIONS,
     ...MODERATOR_PERMISSIONS,
     ...ADMIN_PERMISSIONS,
   ],
-
   [UserRole.SUPER_ADMIN]: [
     ...USER_PERMISSIONS,
     ...MODERATOR_PERMISSIONS,
@@ -122,7 +123,32 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
   ],
 };
 
-// Utility functions for role hierarchy
+// Перевіряє чи має користувач конкретне дозволення
+export function hasPermission(
+  userRole: UserRole,
+  permission: Permission
+): boolean {
+  const rolePermissions = RolePermissions[userRole] || [];
+  return rolePermissions.includes(permission);
+}
+
+//Перевіряє чи має користувач хоча б одне з дозволень
+export function hasAnyPermission(
+  userRole: UserRole,
+  permissions: Permission[]
+): boolean {
+  return permissions.some((permission) => hasPermission(userRole, permission));
+}
+
+// Перевіряє чи має користувач всі дозволення
+export function hasAllPermissions(
+  userRole: UserRole,
+  permissions: Permission[]
+): boolean {
+  return permissions.every((permission) => hasPermission(userRole, permission));
+}
+
+// Отримати числовий рівень ролі для порівняння
 export function getRoleLevel(role: UserRole): number {
   const levels = {
     [UserRole.USER]: 0,
@@ -133,6 +159,7 @@ export function getRoleLevel(role: UserRole): number {
   return levels[role];
 }
 
+//Перевіряє чи роль вища або рівна за необхідну
 export function isRoleHigherOrEqual(
   userRole: UserRole,
   requiredRole: UserRole
@@ -140,20 +167,27 @@ export function isRoleHigherOrEqual(
   return getRoleLevel(userRole) >= getRoleLevel(requiredRole);
 }
 
+/**
+ * Перевіряє чи може користувач підвищити роль іншого користувача
+ * Правила:
+ * - Тільки ADMIN та SUPER_ADMIN можуть підвищувати ролі
+ * - SUPER_ADMIN може підвищити до будь-якої ролі
+ * - ADMIN може підвищити тільки до MODERATOR
+ */
 export function canElevateTo(
   userRole: UserRole,
   targetRole: UserRole
 ): boolean {
-  // Only admins and super admins can elevate roles
+  // Тільки адміни та супер-адміни можуть підвищувати ролі
   if (userRole !== UserRole.ADMIN && userRole !== UserRole.SUPER_ADMIN) {
     return false;
   }
 
-  // Super admin can elevate to any role
+  // Супер-адмін може підвищити до будь-якої ролі
   if (userRole === UserRole.SUPER_ADMIN) {
     return true;
   }
 
-  // Regular admin can only elevate to moderator
+  // Звичайний адмін може підвищити тільки до модератора
   return targetRole === UserRole.MODERATOR;
 }
