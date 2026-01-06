@@ -36,7 +36,7 @@ export function useHasAnyPermission(permissions: Permission[]): boolean {
   const { data: session } = useSession();
   if (!session?.user?.role) return false;
   return permissions.some((permission) =>
-    hasPermission(session.user.role, permission)
+    hasPermission(session.user.role, permission),
   );
 }
 
@@ -45,7 +45,7 @@ export function useHasAllPermissions(permissions: Permission[]): boolean {
   const { data: session } = useSession();
   if (!session?.user?.role) return false;
   return permissions.every((permission) =>
-    hasPermission(session.user.role, permission)
+    hasPermission(session.user.role, permission),
   );
 }
 

@@ -1,7 +1,7 @@
 // packages/auth/src/utils.ts
 
-import { getServerSession } from 'next-auth';
-import { authOptions } from './next-auth.config';
+import { getServerSession } from "next-auth";
+import { authOptions } from "./next-auth.config";
 
 // Отримує сесію на сервері (Server Components)
 export async function getSession() {

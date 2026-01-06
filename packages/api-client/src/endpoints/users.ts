@@ -81,11 +81,11 @@ export class UsersApi {
    */
   async updatePassword(
     userId: string,
-    data: UpdatePasswordRequest
+    data: UpdatePasswordRequest,
   ): Promise<{ message: string }> {
     return this.client.put<{ message: string }>(
       `/api/v1/users/${userId}/password`,
-      data
+      data,
     );
   }
 
@@ -93,7 +93,7 @@ export class UsersApi {
 
   async block(
     userId: string,
-    reason?: string
+    reason?: string,
   ): Promise<{ message: string; user_id: string; is_blocked: boolean }> {
     return this.client.put<{
       message: string;
@@ -108,7 +108,7 @@ export class UsersApi {
   // Метод для розблокування користувача
 
   async unblock(
-    userId: string
+    userId: string,
   ): Promise<{ message: string; user_id: string; is_blocked: boolean }> {
     return this.client.put<{
       message: string;
@@ -123,7 +123,7 @@ export class UsersApi {
 
   async blockUser(
     userId: string,
-    data: BlockUserRequest
+    data: BlockUserRequest,
   ): Promise<{ message: string; user_id: string; is_blocked: boolean }> {
     if (data.is_blocked) {
       return this.block(userId, data.reason);

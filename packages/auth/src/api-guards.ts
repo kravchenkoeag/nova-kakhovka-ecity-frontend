@@ -26,7 +26,7 @@ export function withAuth(handler: (req: NextRequest) => Promise<NextResponse>) {
       headers.set("x-user-role", token.role as string);
       headers.set(
         "x-user-permissions",
-        JSON.stringify(token.permissions || [])
+        JSON.stringify(token.permissions || []),
       );
 
       // Create new request with updated headers
@@ -41,7 +41,7 @@ export function withAuth(handler: (req: NextRequest) => Promise<NextResponse>) {
       console.error("Auth middleware error:", error);
       return NextResponse.json(
         { error: "Internal server error" },
-        { status: 500 }
+        { status: 500 },
       );
     }
   };
@@ -52,7 +52,7 @@ export function withAuth(handler: (req: NextRequest) => Promise<NextResponse>) {
  */
 export function withRole(
   roles: UserRole[],
-  handler: (req: NextRequest) => Promise<NextResponse>
+  handler: (req: NextRequest) => Promise<NextResponse>,
 ) {
   return withAuth(async (req: NextRequest) => {
     const userRole = req.headers.get("x-user-role") as UserRole;
@@ -60,18 +60,18 @@ export function withRole(
     if (!userRole) {
       return NextResponse.json(
         { error: "User role not found" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const hasRequiredRole = roles.some((role) =>
-      isRoleHigherOrEqual(userRole, role)
+      isRoleHigherOrEqual(userRole, role),
     );
 
     if (!hasRequiredRole) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -84,7 +84,7 @@ export function withRole(
  */
 export function withPermission(
   permission: Permission,
-  handler: (req: NextRequest) => Promise<NextResponse>
+  handler: (req: NextRequest) => Promise<NextResponse>,
 ) {
   return withAuth(async (req: NextRequest) => {
     const userRole = req.headers.get("x-user-role") as UserRole;
@@ -92,14 +92,14 @@ export function withPermission(
     if (!userRole) {
       return NextResponse.json(
         { error: "User role not found" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     if (!hasPermission(userRole, permission)) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -112,7 +112,7 @@ export function withPermission(
  */
 export function withAnyPermission(
   permissions: Permission[],
-  handler: (req: NextRequest) => Promise<NextResponse>
+  handler: (req: NextRequest) => Promise<NextResponse>,
 ) {
   return withAuth(async (req: NextRequest) => {
     const userRole = req.headers.get("x-user-role") as UserRole;
@@ -120,18 +120,18 @@ export function withAnyPermission(
     if (!userRole) {
       return NextResponse.json(
         { error: "User role not found" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const hasAnyPermission = permissions.some((permission) =>
-      hasPermission(userRole, permission)
+      hasPermission(userRole, permission),
     );
 
     if (!hasAnyPermission) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -144,7 +144,7 @@ export function withAnyPermission(
  */
 export function withAllPermissions(
   permissions: Permission[],
-  handler: (req: NextRequest) => Promise<NextResponse>
+  handler: (req: NextRequest) => Promise<NextResponse>,
 ) {
   return withAuth(async (req: NextRequest) => {
     const userRole = req.headers.get("x-user-role") as UserRole;
@@ -152,18 +152,18 @@ export function withAllPermissions(
     if (!userRole) {
       return NextResponse.json(
         { error: "User role not found" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const hasAllPermissions = permissions.every((permission) =>
-      hasPermission(userRole, permission)
+      hasPermission(userRole, permission),
     );
 
     if (!hasAllPermissions) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -191,7 +191,7 @@ export function getUserFromRequest(req: NextRequest) {
  */
 export function canManageUser(
   currentUserRole: UserRole,
-  targetUserRole: UserRole
+  targetUserRole: UserRole,
 ): boolean {
   // Super admin can manage everyone
   if (currentUserRole === UserRole.SUPER_ADMIN) {
@@ -213,7 +213,7 @@ export function canManageUser(
  * Middleware для перевірки чи користувач може керувати іншим користувачем
  */
 export function withUserManagement(
-  handler: (req: NextRequest, targetUserId: string) => Promise<NextResponse>
+  handler: (req: NextRequest, targetUserId: string) => Promise<NextResponse>,
 ) {
   return withAuth(async (req: NextRequest) => {
     const currentUser = getUserFromRequest(req);
@@ -223,7 +223,7 @@ export function withUserManagement(
     if (!targetUserId) {
       return NextResponse.json(
         { error: "User ID not provided" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 

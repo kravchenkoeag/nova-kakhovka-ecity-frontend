@@ -64,7 +64,7 @@ export default function WebLoginPage() {
               blockedAt: errorData.details.blockedAt,
             });
             setError(
-              "Ваш акаунт заблоковано. Для отримання додаткової інформації дивіться деталі нижче."
+              "Ваш акаунт заблоковано. Для отримання додаткової інформації дивіться деталі нижче.",
             );
           } else {
             setError(errorData.message || "Невірний email або пароль");
@@ -184,7 +184,7 @@ export default function WebLoginPage() {
                                 year: "numeric",
                                 hour: "2-digit",
                                 minute: "2-digit",
-                              }
+                              },
                             )}
                           </p>
                         )}

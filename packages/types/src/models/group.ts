@@ -1,11 +1,11 @@
 // packages/types/src/models/group.ts
-import type { ObjectId } from './common';
+import type { ObjectId } from "./common";
 
 export interface Group {
   id: ObjectId;
   name: string;
   description: string;
-  type: 'country' | 'region' | 'city' | 'interest';
+  type: "country" | "region" | "city" | "interest";
   location_filter?: string;
   interest_filter: string[];
   members: ObjectId[];

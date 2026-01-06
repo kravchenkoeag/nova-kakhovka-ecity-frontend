@@ -30,7 +30,7 @@ export default async function UserDetailPage({
         Authorization: `Bearer ${token}`,
       },
       cache: "no-store",
-    }
+    },
   );
 
   if (!response.ok) {

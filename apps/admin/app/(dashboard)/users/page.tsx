@@ -22,7 +22,7 @@ export default async function UsersPage() {
   }
 
   const hasPermission = session.user.permissions?.includes(
-    Permission.USERS_MANAGE
+    Permission.USERS_MANAGE,
   );
 
   // Перевірка чи користувач має право управляти користувачами

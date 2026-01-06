@@ -24,7 +24,7 @@ export default function GroupChatPage({ params }: { params: { id: string } }) {
   // WebSocket підключення з автентифікацією
   const { isConnected, messages, sendMessage, sendTyping } = useWebSocket(
     token,
-    true
+    true,
   );
 
   const [inputValue, setInputValue] = useState("");
@@ -68,7 +68,7 @@ export default function GroupChatPage({ params }: { params: { id: string } }) {
   // Фільтруємо повідомлення тільки для цієї групи
   const groupMessages = messages.filter(
     (msg: WSMessage) =>
-      msg.type === "message" && msg.data.group_id === params.id
+      msg.type === "message" && msg.data.group_id === params.id,
   );
 
   // Якщо не авторизований, показуємо повідомлення

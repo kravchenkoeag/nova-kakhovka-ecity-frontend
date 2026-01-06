@@ -1,20 +1,20 @@
 // apps/admin/hooks/useUsers.ts
 
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAccessToken } from '@ecity/auth';
-import { apiClient } from '@/lib/api-client';
-import type { User } from '@ecity/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAccessToken } from "@ecity/auth";
+import { apiClient } from "@/lib/api-client";
+import type { User } from "@ecity/types";
 
 // Hook для отримання списку користувачів
 export function useUsers() {
   const token = useAccessToken();
 
   return useQuery({
-    queryKey: ['users'],
+    queryKey: ["users"],
     queryFn: async () => {
-      if (!token) throw new Error('No token');
+      if (!token) throw new Error("No token");
       // TODO: Додати ендпоінт в api-client для отримання всіх користувачів
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/users`,
@@ -22,9 +22,9 @@ export function useUsers() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
-      if (!response.ok) throw new Error('Failed to fetch users');
+      if (!response.ok) throw new Error("Failed to fetch users");
       return response.json();
     },
     enabled: !!token,
@@ -44,23 +44,23 @@ export function useBlockUser() {
       userId: string;
       block: boolean;
     }) => {
-      if (!token) throw new Error('No token');
+      if (!token) throw new Error("No token");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/users/${userId}/block`,
         {
-          method: 'PUT',
+          method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ is_blocked: block }),
-        }
+        },
       );
-      if (!response.ok) throw new Error('Failed to update user');
+      if (!response.ok) throw new Error("Failed to update user");
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 }

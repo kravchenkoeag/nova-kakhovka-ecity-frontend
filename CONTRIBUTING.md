@@ -78,6 +78,7 @@ git checkout -b fix/your-bug-fix
 ### Naming Conventions
 
 #### Гілки
+
 ```
 feature/add-petition-form
 fix/websocket-reconnection
@@ -86,33 +87,35 @@ docs/update-readme
 ```
 
 #### Файли та папки
+
 ```typescript
 // Components - PascalCase
-MyComponent.tsx
-UserProfile.tsx
+MyComponent.tsx;
+UserProfile.tsx;
 
 // Утиліти - camelCase
-apiClient.ts
-formatDate.ts
+apiClient.ts;
+formatDate.ts;
 
 // Hooks - camelCase з префіксом use
-useUser.ts
-useWebSocket.ts
+useUser.ts;
+useWebSocket.ts;
 
 // Типи - PascalCase
-User.ts
-ApiResponse.ts
+User.ts;
+ApiResponse.ts;
 ```
 
 #### Компоненти
+
 ```typescript
 // ✅ Good
-export function UserProfile() { }
-export function EventCard() { }
+export function UserProfile() {}
+export function EventCard() {}
 
 // ❌ Bad
-export function userprofile() { }
-export function event_card() { }
+export function userprofile() {}
+export function event_card() {}
 ```
 
 ## Стандарти коду
@@ -126,7 +129,7 @@ function getUserName(user: User): string {
 }
 
 // ❌ Уникайте any
-function process(data: any) { } // Bad
+function process(data: any) {} // Bad
 
 // ✅ Використовуйте interface для об'єктів
 interface UserProps {
@@ -294,23 +297,28 @@ pnpm dev
 
 ```markdown
 ## Опис
+
 Коротко опишіть зміни
 
 ## Тип змін
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Як тестувати
+
 1. Перейдіть на сторінку X
 2. Натисніть Y
 3. Перевірте Z
 
 ## Скріншоти
+
 Якщо застосовно
 
 ## Чекліст
+
 - [ ] Код відповідає style guidelines
 - [ ] Self-review виконано
 - [ ] Коментарі додані для складних частин

@@ -23,13 +23,13 @@ export interface UserPresence {
   group_id: string;
   user_id: string;
   user_name: string;
-  action: 'joined' | 'left';
+  action: "joined" | "left";
 }
 
 // Типи для notifications
 export interface WSNotification {
   id: string;
-  type: 'message' | 'event' | 'announcement' | 'system';
+  type: "message" | "event" | "announcement" | "system";
   title: string;
   body: string;
   timestamp: string;

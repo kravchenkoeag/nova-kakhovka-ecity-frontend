@@ -1,7 +1,12 @@
 // packages/api-client/src/endpoints/events.ts
 
-import type { Event, CreateEventRequest, PaginatedResponse, User } from '@ecity/types';
-import { ApiClient } from '../client';
+import type {
+  Event,
+  CreateEventRequest,
+  PaginatedResponse,
+  User,
+} from "@ecity/types";
+import { ApiClient } from "../client";
 
 interface EventFilters {
   category?: string;
@@ -25,7 +30,7 @@ export class EventsApi {
     }
     const query = params.toString();
     return this.client.get<PaginatedResponse<Event>>(
-      `/api/v1/events${query ? `?${query}` : ''}`
+      `/api/v1/events${query ? `?${query}` : ""}`,
     );
   }
 
@@ -36,14 +41,14 @@ export class EventsApi {
 
   // Створити нову подію
   async create(data: CreateEventRequest, token: string): Promise<Event> {
-    return this.client.post<Event>('/api/v1/events', data, token);
+    return this.client.post<Event>("/api/v1/events", data, token);
   }
 
   // Оновити подію
   async update(
     id: string,
     data: Partial<CreateEventRequest>,
-    token: string
+    token: string,
   ): Promise<{ message: string }> {
     return this.client.put(`/api/v1/events/${id}`, data, token);
   }
@@ -64,7 +69,10 @@ export class EventsApi {
   }
 
   // Отримати учасників події
-  async getParticipants(id: string, token: string): Promise<{ participants: User[]; count: number }> {
+  async getParticipants(
+    id: string,
+    token: string,
+  ): Promise<{ participants: User[]; count: number }> {
     return this.client.get(`/api/v1/events/${id}/participants`, token);
   }
 }

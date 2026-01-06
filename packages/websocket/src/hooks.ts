@@ -1,9 +1,9 @@
 // packages/websocket/src/hooks.ts
 
-'use client';
+"use client";
 
-import { useEffect, useState, useCallback } from 'react';
-import { WebSocketClient, type WSMessage } from './client';
+import { useEffect, useState, useCallback } from "react";
+import { WebSocketClient, type WSMessage } from "./client";
 
 // Імпорт useAccessToken з @ecity/auth (може бути недоступним в цьому пакеті)
 // Тому замінюємо на параметр token який передається ззовні
@@ -17,7 +17,7 @@ export function useWebSocket(token: string | null, enabled = true) {
   useEffect(() => {
     if (!enabled || !token) return;
 
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080/ws';
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8080/ws";
 
     const wsClient = new WebSocketClient({
       url: wsUrl,
@@ -28,7 +28,7 @@ export function useWebSocket(token: string | null, enabled = true) {
         setMessages((prev) => [...prev, message]);
       },
       onError: (error) => {
-        console.error('WebSocket error:', error);
+        console.error("WebSocket error:", error);
       },
     });
 
@@ -44,14 +44,14 @@ export function useWebSocket(token: string | null, enabled = true) {
     (groupId: string, content: string) => {
       client?.sendMessage(groupId, content);
     },
-    [client]
+    [client],
   );
 
   const sendTyping = useCallback(
     (groupId: string, isTyping: boolean) => {
       client?.sendTyping(groupId, isTyping);
     },
-    [client]
+    [client],
   );
 
   return {

@@ -1,5 +1,5 @@
 // packages/types/src/models/poll.ts
-import type { ObjectId } from './common';
+import type { ObjectId } from "./common";
 export interface PollOption {
   id: ObjectId;
   text: string;
@@ -9,7 +9,13 @@ export interface PollOption {
 export interface PollQuestion {
   id: ObjectId;
   text: string;
-  type: 'single_choice' | 'multiple_choice' | 'rating' | 'text' | 'scale' | 'yes_no';
+  type:
+    | "single_choice"
+    | "multiple_choice"
+    | "rating"
+    | "text"
+    | "scale"
+    | "yes_no";
   options: PollOption[];
   is_required: boolean;
   min_rating?: number;
@@ -71,7 +77,16 @@ export interface Poll {
   creator_id: ObjectId;
   title: string;
   description: string;
-  category: 'city_planning' | 'transport' | 'infrastructure' | 'social' | 'environment' | 'governance' | 'budget' | 'education' | 'healthcare';
+  category:
+    | "city_planning"
+    | "transport"
+    | "infrastructure"
+    | "social"
+    | "environment"
+    | "governance"
+    | "budget"
+    | "education"
+    | "healthcare";
   questions: PollQuestion[];
   allow_multiple: boolean;
   is_anonymous: boolean;
@@ -84,7 +99,7 @@ export interface Poll {
   total_responses: number;
   responses: PollResponse[];
   results: PollResults;
-  status: 'draft' | 'active' | 'completed' | 'cancelled';
+  status: "draft" | "active" | "completed" | "cancelled";
   is_verified: boolean;
   moderator_note?: string;
   view_count: number;

@@ -1,14 +1,18 @@
 // packages/api-client/src/endpoints/transport.ts
 
-import type { TransportRoute, TransportVehicle, CreateRouteRequest } from '@ecity/types';
-import { ApiClient } from '../client';
+import type {
+  TransportRoute,
+  TransportVehicle,
+  CreateRouteRequest,
+} from "@ecity/types";
+import { ApiClient } from "../client";
 
 export class TransportApi {
   constructor(private client: ApiClient) {}
 
   // Отримати список маршрутів транспорту
   async getRoutes(): Promise<TransportRoute[]> {
-    return this.client.get<TransportRoute[]>('/api/v1/transport/routes');
+    return this.client.get<TransportRoute[]>("/api/v1/transport/routes");
   }
 
   // Отримати маршрут за ID
@@ -24,21 +28,31 @@ export class TransportApi {
   // Отримати найближчі зупинки
   async getNearbyStops(lat: number, lng: number, radius = 1): Promise<any> {
     return this.client.get(
-      `/api/v1/transport/stops/nearby?lat=${lat}&lng=${lng}&radius=${radius}`
+      `/api/v1/transport/stops/nearby?lat=${lat}&lng=${lng}&radius=${radius}`,
     );
   }
 
   // Створити маршрут (admin)
-  async createRoute(data: CreateRouteRequest, token: string): Promise<TransportRoute> {
-    return this.client.post<TransportRoute>('/api/v1/admin/transport/routes', data, token);
+  async createRoute(
+    data: CreateRouteRequest,
+    token: string,
+  ): Promise<TransportRoute> {
+    return this.client.post<TransportRoute>(
+      "/api/v1/admin/transport/routes",
+      data,
+      token,
+    );
   }
 
   // Отримати список транспортних засобів (admin)
-  async getVehicles(routeId?: string, token?: string): Promise<TransportVehicle[]> {
-    const query = routeId ? `?route_id=${routeId}` : '';
+  async getVehicles(
+    routeId?: string,
+    token?: string,
+  ): Promise<TransportVehicle[]> {
+    const query = routeId ? `?route_id=${routeId}` : "";
     return this.client.get<TransportVehicle[]>(
       `/api/v1/admin/transport/vehicles${query}`,
-      token
+      token,
     );
   }
 }

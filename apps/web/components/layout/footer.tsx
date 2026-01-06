@@ -1,7 +1,7 @@
 // apps/web/components/layout/footer.tsx
 
-import Link from 'next/link';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import Link from "next/link";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 // Footer для веб-додатку
 export function Footer() {
@@ -20,9 +20,9 @@ export function Footer() {
               </span>
             </div>
             <p className="text-sm text-gray-400 max-w-md">
-              Електронна платформа для громади Нової Каховки. 
-              Об'єднуємо мешканців та створюємо простір для спілкування, 
-              вирішення проблем та розвитку міста.
+              Електронна платформа для громади Нової Каховки. Об'єднуємо
+              мешканців та створюємо простір для спілкування, вирішення проблем
+              та розвитку міста.
             </p>
           </div>
 
@@ -33,22 +33,34 @@ export function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/about" className="text-sm hover:text-white transition-colors">
+                <Link
+                  href="/about"
+                  className="text-sm hover:text-white transition-colors"
+                >
                   Про проект
                 </Link>
               </li>
               <li>
-                <Link href="/rules" className="text-sm hover:text-white transition-colors">
+                <Link
+                  href="/rules"
+                  className="text-sm hover:text-white transition-colors"
+                >
                   Правила
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-sm hover:text-white transition-colors">
+                <Link
+                  href="/privacy"
+                  className="text-sm hover:text-white transition-colors"
+                >
                   Конфіденційність
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-sm hover:text-white transition-colors">
+                <Link
+                  href="/terms"
+                  className="text-sm hover:text-white transition-colors"
+                >
                   Умови використання
                 </Link>
               </li>
@@ -80,7 +92,8 @@ export function Footer() {
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t border-gray-800">
           <p className="text-sm text-center text-gray-400">
-            © {new Date().getFullYear()} Nova Kakhovka e-City. Всі права захищені.
+            © {new Date().getFullYear()} Nova Kakhovka e-City. Всі права
+            захищені.
           </p>
         </div>
       </div>

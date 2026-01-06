@@ -112,7 +112,7 @@ export async function handleFetchError(response: Response): Promise<never> {
 export async function retryRequest<T>(
   requestFn: () => Promise<T>,
   maxRetries: number = 3,
-  delay: number = 1000
+  delay: number = 1000,
 ): Promise<T> {
   let lastError: any;
 
@@ -134,7 +134,7 @@ export async function retryRequest<T>(
 
       // Wait before retrying
       await new Promise((resolve) =>
-        setTimeout(resolve, delay * Math.pow(2, attempt))
+        setTimeout(resolve, delay * Math.pow(2, attempt)),
       );
     }
   }

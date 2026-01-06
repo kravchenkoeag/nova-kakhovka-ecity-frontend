@@ -1,23 +1,23 @@
 // apps/web/components/layout/navbar.tsx
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
-import { Button } from '@ecity/ui';
-import { 
-  Menu, 
-  X, 
-  User, 
-  LogOut, 
-  MessageSquare, 
+import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+import { Button } from "@ecity/ui";
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  MessageSquare,
   Calendar,
   Megaphone,
   FileText,
   MapPin,
-  Bus
-} from 'lucide-react';
-import { useState } from 'react';
+  Bus,
+} from "lucide-react";
+import { useState } from "react";
 
 // Навігаційна панель для веб-додатку
 export function Navbar() {
@@ -25,12 +25,12 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
-    { name: 'Групи', href: '/groups', icon: MessageSquare },
-    { name: 'Події', href: '/events', icon: Calendar },
-    { name: 'Оголошення', href: '/announcements', icon: Megaphone },
-    { name: 'Петиції', href: '/petitions', icon: FileText },
-    { name: 'Проблеми', href: '/city-issues', icon: MapPin },
-    { name: 'Транспорт', href: '/transport', icon: Bus },
+    { name: "Групи", href: "/groups", icon: MessageSquare },
+    { name: "Події", href: "/events", icon: Calendar },
+    { name: "Оголошення", href: "/announcements", icon: Megaphone },
+    { name: "Петиції", href: "/petitions", icon: FileText },
+    { name: "Проблеми", href: "/city-issues", icon: MapPin },
+    { name: "Транспорт", href: "/transport", icon: Bus },
   ];
 
   return (
@@ -65,7 +65,7 @@ export function Navbar() {
 
           {/* Користувач */}
           <div className="flex items-center space-x-4">
-            {status === 'loading' ? (
+            {status === "loading" ? (
               <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
             ) : session ? (
               <div className="flex items-center space-x-3">
@@ -78,7 +78,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => signOut({ callbackUrl: '/' })}
+                  onClick={() => signOut({ callbackUrl: "/" })}
                 >
                   <LogOut className="h-4 w-4" />
                 </Button>
@@ -91,9 +91,7 @@ export function Navbar() {
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm">
-                    Реєстрація
-                  </Button>
+                  <Button size="sm">Реєстрація</Button>
                 </Link>
               </div>
             )}

@@ -120,7 +120,7 @@ export const AdminNavigationConfig: RouteConfig[] = [
  */
 export function canAccessRoute(
   route: string,
-  userPermissions: Permission[]
+  userPermissions: Permission[],
 ): boolean {
   const requiredPermission = AdminRoutePermissions[route];
 
@@ -140,7 +140,7 @@ export function canAccessRoute(
  * Отримати доступні маршрути для користувача
  */
 export function getAccessibleRoutes(
-  userPermissions: Permission[]
+  userPermissions: Permission[],
 ): RouteConfig[] {
   return AdminNavigationConfig.filter((route) => {
     if (route.permission) {

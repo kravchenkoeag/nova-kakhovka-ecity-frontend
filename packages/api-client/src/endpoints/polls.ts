@@ -1,7 +1,12 @@
 // packages/api-client/src/endpoints/polls.ts
 
-import type { Poll, CreatePollRequest, SubmitPollResponseRequest, PaginatedResponse } from '@ecity/types';
-import { ApiClient } from '../client';
+import type {
+  Poll,
+  CreatePollRequest,
+  SubmitPollResponseRequest,
+  PaginatedResponse,
+} from "@ecity/types";
+import { ApiClient } from "../client";
 
 export class PollsApi {
   constructor(private client: ApiClient) {}
@@ -9,7 +14,7 @@ export class PollsApi {
   // Отримати список опитувань
   async getAll(page = 1, limit = 20): Promise<PaginatedResponse<Poll>> {
     return this.client.get<PaginatedResponse<Poll>>(
-      `/api/v1/polls?page=${page}&limit=${limit}`
+      `/api/v1/polls?page=${page}&limit=${limit}`,
     );
   }
 
@@ -22,7 +27,7 @@ export class PollsApi {
   async submitResponse(
     id: string,
     data: SubmitPollResponseRequest,
-    token: string
+    token: string,
   ): Promise<{ message: string; response_id: string }> {
     return this.client.post(`/api/v1/polls/${id}/respond`, data, token);
   }
@@ -34,12 +39,16 @@ export class PollsApi {
 
   // Створити опитування (admin)
   async create(data: CreatePollRequest, token: string): Promise<Poll> {
-    return this.client.post<Poll>('/api/v1/admin/polls', data, token);
+    return this.client.post<Poll>("/api/v1/admin/polls", data, token);
   }
 
   // Опублікувати опитування (admin)
   async publish(id: string, token: string): Promise<{ message: string }> {
-    return this.client.put(`/api/v1/admin/polls/${id}/publish`, undefined, token);
+    return this.client.put(
+      `/api/v1/admin/polls/${id}/publish`,
+      undefined,
+      token,
+    );
   }
 
   // Закрити опитування (admin)

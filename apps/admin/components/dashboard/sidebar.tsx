@@ -1,10 +1,10 @@
 // apps/admin/components/dashboard/sidebar.tsx
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@ecity/ui';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@ecity/ui";
 import {
   Users,
   MessageSquare,
@@ -17,22 +17,22 @@ import {
   Bell,
   Settings,
   LayoutDashboard,
-} from 'lucide-react';
+} from "lucide-react";
 
 /**
  * Навігаційні елементи sidebar
  */
 const navigation = [
-  {name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard,},
-  {name: 'Користувачі', href: '/dashboard/users', icon: Users,},
-  {name: 'Групи', href: '/dashboard/groups', icon: MessageSquare,},
-  {name: 'Події', href: '/dashboard/events', icon: Calendar,},
-  {name: 'Оголошення', href: '/dashboard/announcements', icon: Megaphone,},
-  {name: 'Петиції', href: '/dashboard/petitions', icon: FileText,},
-  {name: 'Опитування', href: '/dashboard/polls', icon: BarChart3,},
-  {name: 'Проблеми міста', href: '/dashboard/city-issues', icon: AlertCircle,},
-  {name: 'Транспорт', href: '/dashboard/transport', icon: Bus,},
-  {name: 'Сповіщення', href: '/dashboard/notifications', icon: Bell,},
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Користувачі", href: "/dashboard/users", icon: Users },
+  { name: "Групи", href: "/dashboard/groups", icon: MessageSquare },
+  { name: "Події", href: "/dashboard/events", icon: Calendar },
+  { name: "Оголошення", href: "/dashboard/announcements", icon: Megaphone },
+  { name: "Петиції", href: "/dashboard/petitions", icon: FileText },
+  { name: "Опитування", href: "/dashboard/polls", icon: BarChart3 },
+  { name: "Проблеми міста", href: "/dashboard/city-issues", icon: AlertCircle },
+  { name: "Транспорт", href: "/dashboard/transport", icon: Bus },
+  { name: "Сповіщення", href: "/dashboard/notifications", icon: Bell },
 ];
 
 /** Sidebar для адмін панелі
@@ -61,10 +61,10 @@ export function Sidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                'flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                "flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? 'bg-gray-800 text-white'
-                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  ? "bg-gray-800 text-white"
+                  : "text-gray-300 hover:bg-gray-800 hover:text-white",
               )}
             >
               <item.icon className="h-5 w-5" />

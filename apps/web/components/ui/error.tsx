@@ -1,7 +1,7 @@
 // apps/web/components/ui/error.tsx
 
-import { AlertCircle } from 'lucide-react';
-import { Button } from '@ecity/ui';
+import { AlertCircle } from "lucide-react";
+import { Button } from "@ecity/ui";
 
 interface ErrorProps {
   title?: string;

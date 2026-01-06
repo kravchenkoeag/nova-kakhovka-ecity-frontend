@@ -1,7 +1,7 @@
 // apps/admin/app/(dashboard)/layout.tsx
 
-import { Sidebar } from '@/components/dashboard/sidebar';
-import { Header } from '@/components/dashboard/header';
+import { Sidebar } from "@/components/dashboard/sidebar";
+import { Header } from "@/components/dashboard/header";
 
 export default function DashboardLayout({
   children,
@@ -19,9 +19,7 @@ export default function DashboardLayout({
         <Header />
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>
   );

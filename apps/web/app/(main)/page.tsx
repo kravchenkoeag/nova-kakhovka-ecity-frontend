@@ -1,7 +1,7 @@
 // apps/web/app/(main)/page.tsx
 
-import { Button } from '@ecity/ui';
-import Link from 'next/link';
+import { Button } from "@ecity/ui";
+import Link from "next/link";
 import {
   MessageSquare,
   Calendar,
@@ -11,7 +11,7 @@ import {
   Bus,
   Users,
   TrendingUp,
-} from 'lucide-react';
+} from "lucide-react";
 
 /**
  * Головна сторінка веб-додатку
@@ -19,54 +19,54 @@ import {
 export default function HomePage() {
   const features = [
     {
-      name: 'Групи та чати',
-      description: 'Спілкуйтесь з мешканцями за інтересами та локацією',
+      name: "Групи та чати",
+      description: "Спілкуйтесь з мешканцями за інтересами та локацією",
       icon: MessageSquare,
-      href: '/groups',
-      color: 'bg-blue-500',
+      href: "/groups",
+      color: "bg-blue-500",
     },
     {
-      name: 'Події',
-      description: 'Дізнавайтесь про культурні та соціальні заходи',
+      name: "Події",
+      description: "Дізнавайтесь про культурні та соціальні заходи",
       icon: Calendar,
-      href: '/events',
-      color: 'bg-purple-500',
+      href: "/events",
+      color: "bg-purple-500",
     },
     {
-      name: 'Оголошення',
-      description: 'Розміщуйте та шукайте потрібні послуги',
+      name: "Оголошення",
+      description: "Розміщуйте та шукайте потрібні послуги",
       icon: Megaphone,
-      href: '/announcements',
-      color: 'bg-green-500',
+      href: "/announcements",
+      color: "bg-green-500",
     },
     {
-      name: 'Петиції',
-      description: 'Впливайте на рішення міської влади',
+      name: "Петиції",
+      description: "Впливайте на рішення міської влади",
       icon: FileText,
-      href: '/petitions',
-      color: 'bg-red-500',
+      href: "/petitions",
+      color: "bg-red-500",
     },
     {
-      name: 'Проблеми міста',
-      description: 'Повідомляйте про проблеми інфраструктури',
+      name: "Проблеми міста",
+      description: "Повідомляйте про проблеми інфраструктури",
       icon: MapPin,
-      href: '/city-issues',
-      color: 'bg-orange-500',
+      href: "/city-issues",
+      color: "bg-orange-500",
     },
     {
-      name: 'Транспорт',
-      description: 'Відстежуйте громадський транспорт онлайн',
+      name: "Транспорт",
+      description: "Відстежуйте громадський транспорт онлайн",
       icon: Bus,
-      href: '/transport',
-      color: 'bg-indigo-500',
+      href: "/transport",
+      color: "bg-indigo-500",
     },
   ];
 
   const stats = [
-    { label: 'Активних користувачів', value: '1,248', icon: Users },
-    { label: 'Створено груп', value: '45', icon: MessageSquare },
-    { label: 'Заплановано подій', value: '23', icon: Calendar },
-    { label: 'Вирішено проблем', value: '156', icon: TrendingUp },
+    { label: "Активних користувачів", value: "1,248", icon: Users },
+    { label: "Створено груп", value: "45", icon: MessageSquare },
+    { label: "Заплановано подій", value: "23", icon: Calendar },
+    { label: "Вирішено проблем", value: "156", icon: TrendingUp },
   ];
 
   return (
@@ -79,18 +79,21 @@ export default function HomePage() {
               Nova Kakhovka e-City
             </h1>
             <p className="mt-6 text-xl sm:text-2xl text-blue-100 max-w-3xl mx-auto">
-              Електронна платформа для громади. 
-              Об'єднуємо мешканців, вирішуємо проблеми разом.
+              Електронна платформа для громади. Об'єднуємо мешканців, вирішуємо
+              проблеми разом.
             </p>
             <div className="mt-10 flex justify-center space-x-4">
               <Link href="/register">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
+                <Button
+                  size="lg"
+                  className="bg-white text-blue-600 hover:bg-blue-50"
+                >
                   Приєднатися
                 </Button>
               </Link>
               <Link href="/about">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   variant="outline"
                   className="border-white text-white hover:bg-white/10"
                 >
@@ -139,7 +142,9 @@ export default function HomePage() {
                 className="group relative bg-white rounded-lg shadow-sm hover:shadow-lg transition-all overflow-hidden"
               >
                 <div className="p-6">
-                  <div className={`inline-flex p-3 rounded-lg ${feature.color}`}>
+                  <div
+                    className={`inline-flex p-3 rounded-lg ${feature.color}`}
+                  >
                     <feature.icon className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="mt-4 text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors">
@@ -164,12 +169,13 @@ export default function HomePage() {
               Готові приєднатися?
             </h2>
             <p className="mt-4 text-xl text-blue-100">
-              Приєднуйтесь до нашої спільноти та робіть місто кращим разом з нами
+              Приєднуйтесь до нашої спільноти та робіть місто кращим разом з
+              нами
             </p>
             <div className="mt-8">
               <Link href="/register">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-white text-primary hover:bg-blue-50"
                 >
                   Зареєструватися зараз

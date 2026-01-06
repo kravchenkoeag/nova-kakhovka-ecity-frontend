@@ -67,7 +67,7 @@ export default function RegisterPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(registerData),
-        }
+        },
       );
 
       console.log("📥 Response status:", response.status);

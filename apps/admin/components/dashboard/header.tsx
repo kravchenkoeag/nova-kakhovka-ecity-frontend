@@ -1,10 +1,10 @@
 // apps/admin/components/dashboard/header.tsx
 
-'use client';
+"use client";
 
-import { signOut, useSession } from 'next-auth/react';
-import { Button, Avatar } from '@ecity/ui';
-import { LogOut, Bell } from 'lucide-react';
+import { signOut, useSession } from "next-auth/react";
+import { Button, Avatar } from "@ecity/ui";
+import { LogOut, Bell } from "lucide-react";
 
 export function Header() {
   const { data: session } = useSession();
@@ -22,9 +22,7 @@ export function Header() {
 
         {/* User menu */}
         <div className="flex items-center gap-3">
-          <Avatar>
-            {session?.user?.name?.charAt(0) || 'A'}
-          </Avatar>
+          <Avatar>{session?.user?.name?.charAt(0) || "A"}</Avatar>
           <div className="hidden md:block">
             <p className="text-sm font-medium">{session?.user?.name}</p>
             <p className="text-xs text-gray-500">{session?.user?.email}</p>
@@ -32,7 +30,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => signOut({ callbackUrl: '/login' })}
+            onClick={() => signOut({ callbackUrl: "/login" })}
           >
             <LogOut className="w-4 h-4" />
           </Button>

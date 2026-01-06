@@ -1,7 +1,7 @@
 // apps/admin/app/api/auth/[...nextauth]/route.ts
 
-import NextAuth from 'next-auth';
-import { authOptions } from '@ecity/auth';
+import NextAuth from "next-auth";
+import { authOptions } from "@ecity/auth";
 
 /**
  * NextAuth API route handler для адмін панелі

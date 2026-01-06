@@ -68,6 +68,7 @@ nova-kakhovka-ecity-frontend/
 ### Передумови
 
 **Обов'язкові вимоги:**
+
 - **Node.js** >= 18.0.0 (рекомендовано 20.x LTS)
 - **pnpm** >= 8.0.0 (рекомендовано) або npm >= 9.0.0
 - **Backend** запущений на `http://localhost:8080`
@@ -75,6 +76,7 @@ nova-kakhovka-ecity-frontend/
 - **Git** для клонування репозиторію
 
 **Перевірка версій:**
+
 ```bash
 node --version      # повинно бути >= 18.0.0
 pnpm --version      # повинно бути >= 8.0.0
@@ -90,16 +92,19 @@ cd nova-kakhovka-ecity-frontend
 ### Крок 2: Встановлення pnpm (якщо потрібно)
 
 **Через npm:**
+
 ```bash
 npm install -g pnpm
 ```
 
 **Через Homebrew (macOS):**
+
 ```bash
 brew install pnpm
 ```
 
 **Через скрипт (Linux/macOS):**
+
 ```bash
 curl -fsSL https://get.pnpm.io/install.sh | sh -
 ```
@@ -197,6 +202,7 @@ pnpm dev
 ```
 
 Це запустить:
+
 - **Адмін панель** на http://localhost:3001
 - **Веб-додаток** на http://localhost:3000
 
@@ -213,18 +219,21 @@ pnpm dev:web        # → http://localhost:3000
 ### Крок 7: Перший вхід
 
 #### Для адмін панелі (http://localhost:3001/login):
+
 ```
 Email: moderator@example.com
 Password: moderator123
 ```
 
 #### Для веб-додатку (http://localhost:3000/login):
+
 ```
 Email: test@example.com
 Password: password123
 ```
 
 **Або створіть новий акаунт:**
+
 - Перейдіть на `/register`
 - Заповніть форму реєстрації
 - Після реєстрації увійдіть через `/login`
@@ -317,6 +326,7 @@ pnpm --filter @ecity/ui add <package-name>
 ### Тестові акаунти
 
 **Модератор (адмін панель):**
+
 ```
 Email: moderator@example.com
 Password: moderator123
@@ -324,6 +334,7 @@ Password: moderator123
 ```
 
 **Звичайний користувач:**
+
 ```
 Email: test@example.com
 Password: password123
@@ -356,11 +367,11 @@ Password: password123
 // Web: /profile, /groups, /events тощо
 
 // middleware.ts приклад:
-export { default } from "next-auth/middleware"
+export { default } from "next-auth/middleware";
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*"]
-}
+  matcher: ["/dashboard/:path*", "/profile/:path*"],
+};
 ```
 
 ## 🛠️ Технології
@@ -602,18 +613,21 @@ packages/
 ## 🌐 API Endpoints (Backend)
 
 ### Авторизація
+
 - `POST /api/register` - Реєстрація
 - `POST /api/login` - Логін
 - `POST /api/logout` - Вихід
 - `GET /api/me` - Поточний користувач
 
 ### Користувачі
+
 - `GET /api/users` - Список користувачів
 - `GET /api/users/:id` - Деталі користувача
 - `PUT /api/users/:id` - Оновлення профілю
 - `DELETE /api/users/:id` - Видалення (admin)
 
 ### Групи
+
 - `GET /api/groups` - Список груп
 - `POST /api/groups` - Створити групу
 - `GET /api/groups/:id` - Деталі групи
@@ -623,6 +637,7 @@ packages/
 - `POST /api/groups/:id/leave` - Покинути
 
 ### Події
+
 - `GET /api/events` - Список подій
 - `POST /api/events` - Створити подію
 - `GET /api/events/:id` - Деталі події
@@ -630,6 +645,7 @@ packages/
 - `DELETE /api/events/:id` - Видалити подію
 
 ### Оголошення
+
 - `GET /api/announcements` - Список оголошень
 - `POST /api/announcements` - Створити оголошення
 - `GET /api/announcements/:id` - Деталі оголошення
@@ -637,28 +653,33 @@ packages/
 - `DELETE /api/announcements/:id` - Видалити
 
 ### Петиції
+
 - `GET /api/petitions` - Список петицій
 - `POST /api/petitions` - Створити петицію
 - `GET /api/petitions/:id` - Деталі петиції
 - `POST /api/petitions/:id/sign` - Підписати петицію
 
 ### Опитування
+
 - `GET /api/polls` - Список опитувань
 - `POST /api/polls` - Створити опитування
 - `GET /api/polls/:id` - Деталі опитування
 - `POST /api/polls/:id/vote` - Проголосувати
 
 ### Проблеми міста
+
 - `GET /api/city-issues` - Список проблем
 - `POST /api/city-issues` - Повідомити проблему
 - `GET /api/city-issues/:id` - Деталі проблеми
 - `PUT /api/city-issues/:id/status` - Оновити статус (admin)
 
 ### Транспорт
+
 - `GET /api/transport/routes` - Маршрути транспорту
 - `GET /api/transport/live` - Поточне місцезнаходження
 
 ### WebSocket
+
 - `ws://localhost:8080/ws` - Real-time чат та сповіщення
 
 ## 🚦 Поради щодо розробки
@@ -666,12 +687,14 @@ packages/
 ### Вибір IDE
 
 **VS Code** (рекомендовано):
+
 - Легкий та швидкий
 - Чудова підтримка TypeScript
 - Великий вибір розширень
 - Безкоштовний
 
 **Рекомендовані розширення:**
+
 ```
 - ESLint
 - Prettier
@@ -682,6 +705,7 @@ packages/
 ```
 
 **WebStorm:**
+
 - Потужніший з коробки
 - Краща рефакторинг підтримка
 - Вбудований термінал та Git
@@ -690,13 +714,15 @@ packages/
 ### Best Practices
 
 1. **Використовуйте TypeScript типи:**
-```typescript
-import type { User } from '@ecity/types'
 
-const user: User = await fetchUser(id)
+```typescript
+import type { User } from "@ecity/types";
+
+const user: User = await fetchUser(id);
 ```
 
 2. **Server Components за замовчуванням:**
+
 ```typescript
 // app/page.tsx - Server Component
 export default async function Page() {
@@ -706,6 +732,7 @@ export default async function Page() {
 ```
 
 3. **'use client' тільки коли потрібно:**
+
 ```typescript
 'use client' // для useState, useEffect, event handlers
 
@@ -718,11 +745,12 @@ export function Counter() {
 ```
 
 4. **React Query для даних:**
+
 ```typescript
 const { data, isLoading } = useQuery({
-  queryKey: ['users'],
+  queryKey: ["users"],
   queryFn: fetchUsers,
-})
+});
 ```
 
 ## 🐛 Troubleshooting
@@ -756,6 +784,7 @@ pnpm install
 ### Проблема: Backend connection refused
 
 Переконайтесь що:
+
 1. Backend запущений на правильному порту
 2. MongoDB запущений
 3. Змінні оточення правильні
@@ -776,6 +805,7 @@ openssl rand -base64 32
 ## 📚 Додаткові ресурси
 
 ### Документація
+
 - [Next.js Docs](https://nextjs.org/docs)
 - [React Docs](https://react.dev/)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
@@ -785,6 +815,7 @@ openssl rand -base64 32
 - [NextAuth.js](https://next-auth.js.org/)
 
 ### Корисні посилання
+
 - [Turborepo Handbook](https://turbo.build/repo/docs)
 - [pnpm Workspaces](https://pnpm.io/workspaces)
 - [React Hook Form](https://react-hook-form.com/get-started)
@@ -840,7 +871,7 @@ export function MyComponent() {
     queryKey: ['myData'],
     queryFn: getMyData,
   })
-  
+
   if (isLoading) return <div>Loading...</div>
   return <div>{JSON.stringify(data)}</div>
 }
@@ -851,14 +882,14 @@ export function MyComponent() {
 ```typescript
 // packages/types/src/myType.ts
 export interface MyData {
-  id: string
-  name: string
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // packages/types/src/index.ts
-export * from './myType'
+export * from "./myType";
 ```
 
 ## 🚀 Deployment
@@ -933,7 +964,7 @@ CMD ["pnpm", "--filter", "admin", "start"]
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 
 services:
   admin:
@@ -1087,11 +1118,13 @@ pm2 startup
 ### Environment Variables Security
 
 **НІКОЛИ не коммітьте:**
+
 - `.env.local`
 - `.env.production.local`
 - Будь-які файли з паролями/ключами
 
 **Використовуйте:**
+
 - `.env.example` - шаблон без реальних значень
 - Secret management (Vercel Secrets, AWS Secrets Manager)
 - Environment-specific конфіги
@@ -1115,26 +1148,26 @@ pnpm add @sentry/nextjs --filter web
 
 ```javascript
 // sentry.client.config.js
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   tracesSampleRate: 1.0,
   environment: process.env.NODE_ENV,
-})
+});
 ```
 
 ### Google Analytics
 
 ```typescript
 // lib/gtag.ts
-export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID
+export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export const pageview = (url: string) => {
-  window.gtag('config', GA_TRACKING_ID, {
+  window.gtag("config", GA_TRACKING_ID, {
     page_path: url,
-  })
-}
+  });
+};
 ```
 
 ## 🧪 Тестування
@@ -1168,15 +1201,15 @@ pnpm add -D @playwright/test
 
 ```typescript
 // e2e/login.spec.ts
-import { test, expect } from '@playwright/test'
+import { test, expect } from "@playwright/test";
 
-test('should login successfully', async ({ page }) => {
-  await page.goto('http://localhost:3000/login')
-  await page.fill('input[name="email"]', 'test@example.com')
-  await page.fill('input[name="password"]', 'password123')
-  await page.click('button[type="submit"]')
-  await expect(page).toHaveURL('http://localhost:3000/profile')
-})
+test("should login successfully", async ({ page }) => {
+  await page.goto("http://localhost:3000/login");
+  await page.fill('input[name="email"]', "test@example.com");
+  await page.fill('input[name="password"]', "password123");
+  await page.click('button[type="submit"]');
+  await expect(page).toHaveURL("http://localhost:3000/profile");
+});
 ```
 
 ## 🎨 Стилізація та теми
@@ -1187,26 +1220,23 @@ test('should login successfully', async ({ page }) => {
 // tailwind.config.js
 module.exports = {
   content: [
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
+          50: "#f0f9ff",
+          100: "#e0f2fe",
           // ... інші відтінки
-          900: '#0c4a6e',
+          900: "#0c4a6e",
         },
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-  ],
-}
+  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
+};
 ```
 
 ### Dark Mode
@@ -1231,6 +1261,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 ### Naming Conventions
 
 **Branches:**
+
 - `feature/` - нові фічі
 - `bugfix/` - виправлення багів
 - `hotfix/` - критичні виправлення
@@ -1238,6 +1269,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 - `docs/` - документація
 
 **Commits:**
+
 ```bash
 feat: add user profile page
 fix: resolve login redirect issue
@@ -1252,23 +1284,28 @@ chore: update dependencies
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 - [ ] Unit tests pass
 - [ ] E2E tests pass
 - [ ] Manual testing completed
 
 ## Screenshots (if applicable)
+
 Add screenshots here
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex code
@@ -1288,6 +1325,7 @@ Add screenshots here
 ### Code Style
 
 Проєкт використовує:
+
 - **ESLint** для JavaScript/TypeScript linting
 - **Prettier** для форматування коду
 - **TypeScript strict mode**
@@ -1325,7 +1363,7 @@ pnpm format:check
 
 ## 👥 Автори
 
-- **Nova Kakhovka Development Team** - *Initial work*
+- **Nova Kakhovka Development Team** - _Initial work_
 
 ## 🙏 Подяки
 
@@ -1342,6 +1380,7 @@ pnpm format:check
 ## 📅 Changelog
 
 ### [Unreleased]
+
 - Початкова версія frontend
 - Базова адмін панель
 - Користувацький веб-інтерфейс
@@ -1349,6 +1388,7 @@ pnpm format:check
 - Real-time чат через WebSocket
 
 ### Заплановані фічі
+
 - [ ] Push notifications через Firebase
 - [ ] Покращена карта транспорту
 - [ ] Інтеграція з міськими службами

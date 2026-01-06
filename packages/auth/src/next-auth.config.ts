@@ -76,7 +76,7 @@ export const authOptions: NextAuthOptions = {
                 email: credentials.email,
                 password: credentials.password,
               }),
-            }
+            },
           );
 
           // Обробка помилок від backend
@@ -96,7 +96,7 @@ export const authOptions: NextAuthOptions = {
 
           // Map backend role to frontend role
           const role = mapBackendRoleToFrontend(
-            data.user.role || (data.user.is_moderator ? "MODERATOR" : "USER")
+            data.user.role || (data.user.is_moderator ? "MODERATOR" : "USER"),
           );
 
           // Get permissions for the role

@@ -161,15 +161,15 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
 ```typescript
 export function hasPermission(
   userRole: UserRole,
-  permission: Permission
+  permission: Permission,
 ): boolean;
 export function hasAnyPermission(
   userRole: UserRole,
-  permissions: Permission[]
+  permissions: Permission[],
 ): boolean;
 export function hasAllPermissions(
   userRole: UserRole,
-  permissions: Permission[]
+  permissions: Permission[],
 ): boolean;
 export function getRolePermissions(role: UserRole): Permission[];
 export function canAccessRoute(role: UserRole, routePath: string): boolean;
@@ -183,10 +183,10 @@ export function canAccessRoute(role: UserRole, routePath: string): boolean;
 export async function requireAuth(): Promise<Session>;
 export async function requireRole(roles: UserRole[]): Promise<Session>;
 export async function requirePermission(
-  permission: Permission
+  permission: Permission,
 ): Promise<Session>;
 export async function requirePermissions(
-  permissions: Permission[]
+  permissions: Permission[],
 ): Promise<Session>;
 ```
 
@@ -243,11 +243,11 @@ export const WebRoutePermissions: Record<string, Permission[]>;
 export function withAuth(handler: NextApiHandler): NextApiHandler;
 export function withRole(
   roles: UserRole[],
-  handler: NextApiHandler
+  handler: NextApiHandler,
 ): NextApiHandler;
 export function withPermission(
   permission: Permission,
-  handler: NextApiHandler
+  handler: NextApiHandler,
 ): NextApiHandler;
 ```
 
@@ -315,11 +315,11 @@ export async function ProtectedPage({
 export function withAuth<P>(Component: ComponentType<P>): ComponentType<P>;
 export function withRole<P>(
   roles: UserRole[],
-  Component: ComponentType<P>
+  Component: ComponentType<P>,
 ): ComponentType<P>;
 export function withPermission<P>(
   permission: Permission,
-  Component: ComponentType<P>
+  Component: ComponentType<P>,
 ): ComponentType<P>;
 ```
 

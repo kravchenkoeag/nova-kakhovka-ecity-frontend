@@ -125,7 +125,7 @@ export default function EventsPage() {
                         "dd MMMM yyyy, HH:mm",
                         {
                           locale: uk,
-                        }
+                        },
                       )}
                     </span>
                   </div>

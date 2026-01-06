@@ -1,7 +1,7 @@
 // apps/admin/components/dashboard/stats-card.tsx
 
-import { cn } from '@ecity/ui';
-import { LucideIcon } from 'lucide-react';
+import { cn } from "@ecity/ui";
+import { LucideIcon } from "lucide-react";
 
 interface StatsCardProps {
   title: string;
@@ -27,8 +27,8 @@ export function StatsCard({
   return (
     <div
       className={cn(
-        'rounded-lg border bg-card p-6 text-card-foreground shadow-sm',
-        className
+        "rounded-lg border bg-card p-6 text-card-foreground shadow-sm",
+        className,
       )}
     >
       <div className="flex items-center justify-between">
@@ -49,11 +49,11 @@ export function StatsCard({
         <div className="mt-4">
           <span
             className={cn(
-              'text-xs font-medium',
-              trend.isPositive ? 'text-green-600' : 'text-red-600'
+              "text-xs font-medium",
+              trend.isPositive ? "text-green-600" : "text-red-600",
             )}
           >
-            {trend.isPositive ? '+' : '-'}
+            {trend.isPositive ? "+" : "-"}
             {Math.abs(trend.value)}%
           </span>
           <span className="text-xs text-muted-foreground ml-2">

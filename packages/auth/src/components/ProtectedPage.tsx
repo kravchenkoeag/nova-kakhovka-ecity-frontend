@@ -66,7 +66,7 @@ export async function ProtectedPage({
 export function createProtectedPage(
   requiredRole?: UserRole | UserRole[],
   requiredPermissions?: Permission | Permission[],
-  requireAllPermissions?: boolean
+  requireAllPermissions?: boolean,
 ) {
   return function ProtectedPageWrapper({ children }: { children: ReactNode }) {
     return (
@@ -104,7 +104,7 @@ export function createPermissionBasedPage(permission: Permission) {
 
 export function createMultiplePermissionPage(
   permissions: Permission[],
-  requireAll = false
+  requireAll = false,
 ) {
   return createProtectedPage(undefined, permissions, requireAll);
 }

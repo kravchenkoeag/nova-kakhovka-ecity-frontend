@@ -41,6 +41,7 @@ pnpm install
 ```
 
 Це встановить залежності для:
+
 - apps/admin
 - apps/web
 - всіх packages (ui, api-client, auth, types)
@@ -57,6 +58,7 @@ cp apps/admin/.env.example apps/admin/.env.local
 ```
 
 Мінімальна конфігурація:
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8080
 BACKEND_URL=http://localhost:8080
@@ -75,6 +77,7 @@ cp apps/web/.env.example apps/web/.env.local
 ```
 
 Мінімальна конфігурація:
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8080
 BACKEND_URL=http://localhost:8080
@@ -112,6 +115,7 @@ pnpm dev
 ```
 
 Це запустить:
+
 - Адмін панель: http://localhost:3001
 - Веб-додаток: http://localhost:3000
 
@@ -130,6 +134,7 @@ pnpm dev:web
 ### Адмін панель (http://localhost:3001/login)
 
 Тестовий акаунт модератора:
+
 ```
 Email: moderator@example.com
 Password: moderator123
@@ -138,6 +143,7 @@ Password: moderator123
 ### Веб-додаток (http://localhost:3000)
 
 Перейдіть на `/register` для створення нового акаунту або використайте:
+
 ```
 Email: test@example.com
 Password: password123

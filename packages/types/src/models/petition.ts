@@ -1,5 +1,5 @@
 // packages/types/src/models/petition.ts
-import type { ObjectId } from './common';
+import type { ObjectId } from "./common";
 export interface PetitionSignature {
   user_id: ObjectId;
   full_name: string;
@@ -14,7 +14,7 @@ export interface OfficialResponse {
   responder_name: string;
   position: string;
   response: string;
-  decision: 'accepted' | 'rejected' | 'partially_accepted';
+  decision: "accepted" | "rejected" | "partially_accepted";
   action_plan?: string;
   responded_at: string;
   documents: string[];
@@ -25,12 +25,28 @@ export interface Petition {
   author_id: ObjectId;
   title: string;
   description: string;
-  category: 'infrastructure' | 'social' | 'environment' | 'economy' | 'governance' | 'safety' | 'transport' | 'education' | 'healthcare';
+  category:
+    | "infrastructure"
+    | "social"
+    | "environment"
+    | "economy"
+    | "governance"
+    | "safety"
+    | "transport"
+    | "education"
+    | "healthcare";
   required_signatures: number;
   demands: string;
   signatures: PetitionSignature[];
   signature_count: number;
-  status: 'draft' | 'active' | 'completed' | 'expired' | 'under_review' | 'accepted' | 'rejected';
+  status:
+    | "draft"
+    | "active"
+    | "completed"
+    | "expired"
+    | "under_review"
+    | "accepted"
+    | "rejected";
   is_verified: boolean;
   moderator_note?: string;
   official_response?: OfficialResponse;

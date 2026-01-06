@@ -1,7 +1,12 @@
 // packages/api-client/src/endpoints/petitions.ts
 
-import type { Petition, CreatePetitionRequest, SignPetitionRequest, PaginatedResponse } from '@ecity/types';
-import { ApiClient } from '../client';
+import type {
+  Petition,
+  CreatePetitionRequest,
+  SignPetitionRequest,
+  PaginatedResponse,
+} from "@ecity/types";
+import { ApiClient } from "../client";
 
 interface PetitionFilters {
   category?: string;
@@ -14,7 +19,9 @@ export class PetitionsApi {
   constructor(private client: ApiClient) {}
 
   // Отримати список петицій з фільтрами
-  async getAll(filters?: PetitionFilters): Promise<PaginatedResponse<Petition>> {
+  async getAll(
+    filters?: PetitionFilters,
+  ): Promise<PaginatedResponse<Petition>> {
     const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -23,7 +30,7 @@ export class PetitionsApi {
     }
     const query = params.toString();
     return this.client.get<PaginatedResponse<Petition>>(
-      `/api/v1/petitions${query ? `?${query}` : ''}`
+      `/api/v1/petitions${query ? `?${query}` : ""}`,
     );
   }
 
@@ -34,11 +41,15 @@ export class PetitionsApi {
 
   // Створити нову петицію
   async create(data: CreatePetitionRequest, token: string): Promise<Petition> {
-    return this.client.post<Petition>('/api/v1/petitions', data, token);
+    return this.client.post<Petition>("/api/v1/petitions", data, token);
   }
 
   // Підписати петицію
-  async sign(id: string, data: SignPetitionRequest, token: string): Promise<{ message: string }> {
+  async sign(
+    id: string,
+    data: SignPetitionRequest,
+    token: string,
+  ): Promise<{ message: string }> {
     return this.client.post(`/api/v1/petitions/${id}/sign`, data, token);
   }
 

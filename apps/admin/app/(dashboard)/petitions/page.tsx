@@ -192,7 +192,7 @@ export default async function PetitionsManagementPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {petitions.map((petition) => {
                 const progress = Math.round(
-                  (petition.signatures / petition.goal) * 100
+                  (petition.signatures / petition.goal) * 100,
                 );
                 return (
                   <tr key={petition.id} className="hover:bg-gray-50">

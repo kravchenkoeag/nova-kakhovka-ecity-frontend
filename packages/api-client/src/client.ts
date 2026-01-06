@@ -39,7 +39,7 @@ export class ApiClient {
    */
   private async request<T>(
     endpoint: string,
-    config: RequestConfig = {}
+    config: RequestConfig = {},
   ): Promise<T> {
     const { token, ...fetchConfig } = config;
 

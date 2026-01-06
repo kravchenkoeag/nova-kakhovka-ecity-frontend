@@ -1,14 +1,14 @@
 // packages/websocket/src/client.ts
 
-import type { Message } from '@ecity/types';
+import type { Message } from "@ecity/types";
 
 // Типи WebSocket повідомлень
-export type WSMessageType = 
-  | 'message'
-  | 'typing'
-  | 'user_joined'
-  | 'user_left'
-  | 'notification';
+export type WSMessageType =
+  | "message"
+  | "typing"
+  | "user_joined"
+  | "user_left"
+  | "notification";
 
 export interface WSMessage {
   type: WSMessageType;
@@ -46,8 +46,8 @@ export class WebSocketClient {
     };
   }
 
- // Підключення до WebSocket сервера
-  
+  // Підключення до WebSocket сервера
+
   connect() {
     if (this.ws?.readyState === WebSocket.OPEN) {
       return;
@@ -60,7 +60,7 @@ export class WebSocketClient {
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
-        console.log('WebSocket connected');
+        console.log("WebSocket connected");
         this.reconnectAttempts = 0;
         this.config.onConnect?.();
       };
@@ -70,17 +70,17 @@ export class WebSocketClient {
           const message: WSMessage = JSON.parse(event.data);
           this.config.onMessage?.(message);
         } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
+          console.error("Failed to parse WebSocket message:", error);
         }
       };
 
       this.ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        console.error("WebSocket error:", error);
         this.config.onError?.(error);
       };
 
       this.ws.onclose = () => {
-        console.log('WebSocket disconnected');
+        console.log("WebSocket disconnected");
         this.config.onDisconnect?.();
 
         if (!this.isManualClose) {
@@ -88,7 +88,7 @@ export class WebSocketClient {
         }
       };
     } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
+      console.error("Failed to create WebSocket connection:", error);
       this.reconnect();
     }
   }
@@ -104,36 +104,36 @@ export class WebSocketClient {
       };
       this.ws.send(JSON.stringify(message));
     } else {
-      console.warn('WebSocket is not connected');
+      console.warn("WebSocket is not connected");
     }
   }
 
   // Відправка чат повідомлення
-   
+
   sendMessage(groupId: string, content: string) {
-    this.send('message', { group_id: groupId, content });
+    this.send("message", { group_id: groupId, content });
   }
 
   // Індикатор набору тексту
-  
+
   sendTyping(groupId: string, isTyping: boolean) {
-    this.send('typing', { group_id: groupId, is_typing: isTyping });
+    this.send("typing", { group_id: groupId, is_typing: isTyping });
   }
 
   // Автоматичне перепідключення
-  
+
   private reconnect() {
     if (
       this.reconnectAttempts >= (this.config.maxReconnectAttempts || 5) ||
       this.isManualClose
     ) {
-      console.log('Max reconnect attempts reached or manual close');
+      console.log("Max reconnect attempts reached or manual close");
       return;
     }
 
     this.reconnectAttempts++;
     console.log(
-      `Reconnecting... (${this.reconnectAttempts}/${this.config.maxReconnectAttempts})`
+      `Reconnecting... (${this.reconnectAttempts}/${this.config.maxReconnectAttempts})`,
     );
 
     this.reconnectTimeout = setTimeout(() => {
@@ -142,7 +142,7 @@ export class WebSocketClient {
   }
 
   // Закриття з'єднання
-  
+
   disconnect() {
     this.isManualClose = true;
     if (this.reconnectTimeout) {
@@ -153,7 +153,7 @@ export class WebSocketClient {
   }
 
   // Перевірка стану з'єднання
-  
+
   isConnected(): boolean {
     return this.ws?.readyState === WebSocket.OPEN;
   }

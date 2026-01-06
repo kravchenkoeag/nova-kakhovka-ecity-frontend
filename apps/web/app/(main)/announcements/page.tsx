@@ -109,7 +109,7 @@ export default function AnnouncementsPage() {
                         "dd MMMM yyyy, HH:mm",
                         {
                           locale: uk,
-                        }
+                        },
                       )}
                     </span>
                   </div>

@@ -1,5 +1,5 @@
 // packages/types/src/models/cityIssue.ts
-import type { ObjectId, Location } from './common';
+import type { ObjectId, Location } from "./common";
 export interface IssueComment {
   id: ObjectId;
   author_id: ObjectId;
@@ -14,13 +14,22 @@ export interface CityIssue {
   reporter_id: ObjectId;
   title: string;
   description: string;
-  category: 'road' | 'lighting' | 'water' | 'electricity' | 'waste' | 'transport' | 'building' | 'safety' | 'other';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  category:
+    | "road"
+    | "lighting"
+    | "water"
+    | "electricity"
+    | "waste"
+    | "transport"
+    | "building"
+    | "safety"
+    | "other";
+  priority: "low" | "medium" | "high" | "critical";
   location: Location;
   address: string;
   photos: string[];
   videos: string[];
-  status: 'reported' | 'in_progress' | 'resolved' | 'rejected' | 'duplicate';
+  status: "reported" | "in_progress" | "resolved" | "rejected" | "duplicate";
   assigned_to?: ObjectId;
   assigned_dept?: string;
   resolution?: string;

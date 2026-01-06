@@ -1,13 +1,22 @@
 // packages/types/src/models/event.ts
 
-import type { ObjectId, Location, ContactInfo } from './common';
+import type { ObjectId, Location, ContactInfo } from "./common";
 
 export interface Event {
   id: ObjectId;
   organizer_id: ObjectId;
   title: string;
   description: string;
-  category: 'cultural' | 'educational' | 'social' | 'business' | 'sports' | 'charity' | 'meeting' | 'workshop' | 'conference';
+  category:
+    | "cultural"
+    | "educational"
+    | "social"
+    | "business"
+    | "sports"
+    | "charity"
+    | "meeting"
+    | "workshop"
+    | "conference";
   start_date: string;
   end_date?: string;
   location?: Location;
@@ -28,7 +37,7 @@ export interface Event {
   contact_info: ContactInfo[];
   images: string[];
   cover_image?: string;
-  status: 'draft' | 'published' | 'cancelled' | 'completed';
+  status: "draft" | "published" | "cancelled" | "completed";
   is_verified: boolean;
   is_featured: boolean;
   view_count: number;

@@ -7,7 +7,7 @@ import { UserRole, Permission, RolePermissions } from "@ecity/types";
  */
 export function hasPermission(
   userRole: UserRole,
-  permission: Permission
+  permission: Permission,
 ): boolean {
   const rolePermissions = RolePermissions[userRole] || [];
   return rolePermissions.includes(permission);
@@ -18,7 +18,7 @@ export function hasPermission(
  */
 export function hasAnyPermission(
   userRole: UserRole,
-  permissions: Permission[]
+  permissions: Permission[],
 ): boolean {
   return permissions.some((permission) => hasPermission(userRole, permission));
 }
@@ -28,7 +28,7 @@ export function hasAnyPermission(
  */
 export function hasAllPermissions(
   userRole: UserRole,
-  permissions: Permission[]
+  permissions: Permission[],
 ): boolean {
   return permissions.every((permission) => hasPermission(userRole, permission));
 }
@@ -68,7 +68,7 @@ export function canAccessRoute(role: UserRole, routePath: string): boolean {
  */
 export function isRoleHigherOrEqual(
   userRole: UserRole,
-  requiredRole: UserRole
+  requiredRole: UserRole,
 ): boolean {
   const roleHierarchy = {
     [UserRole.USER]: 0,
@@ -85,7 +85,7 @@ export function isRoleHigherOrEqual(
  */
 export function canManageUser(
   currentUserRole: UserRole,
-  targetUserRole: UserRole
+  targetUserRole: UserRole,
 ): boolean {
   // Super admin can manage everyone
   if (currentUserRole === UserRole.SUPER_ADMIN) {
@@ -108,7 +108,7 @@ export function canManageUser(
  */
 export function canPromoteTo(
   currentUserRole: UserRole,
-  targetRole: UserRole
+  targetRole: UserRole,
 ): boolean {
   // Super admin can promote to any role
   if (currentUserRole === UserRole.SUPER_ADMIN) {
@@ -129,7 +129,7 @@ export function canPromoteTo(
  */
 export function canModerateContent(
   userRole: UserRole,
-  contentType: "announcement" | "event" | "group" | "city_issue"
+  contentType: "announcement" | "event" | "group" | "city_issue",
 ): boolean {
   switch (contentType) {
     case "announcement":
@@ -169,7 +169,7 @@ export function getAvailableRoles(currentUserRole: UserRole): UserRole[] {
  */
 export function canCreateContent(
   userRole: UserRole,
-  contentType: "announcement" | "event" | "petition" | "poll" | "group"
+  contentType: "announcement" | "event" | "petition" | "poll" | "group",
 ): boolean {
   switch (contentType) {
     case "announcement":
@@ -192,7 +192,7 @@ export function canCreateContent(
  */
 export function canEditOwnContent(
   userRole: UserRole,
-  contentType: "announcement" | "event"
+  contentType: "announcement" | "event",
 ): boolean {
   switch (contentType) {
     case "announcement":
@@ -209,7 +209,7 @@ export function canEditOwnContent(
  */
 export function canDeleteOwnContent(
   userRole: UserRole,
-  contentType: "announcement" | "event"
+  contentType: "announcement" | "event",
 ): boolean {
   switch (contentType) {
     case "announcement":

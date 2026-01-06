@@ -32,7 +32,7 @@ export async function requireRole(roles: UserRole[]) {
   }
 
   const hasRequiredRole = roles.some((role) =>
-    isRoleHigherOrEqual(session.user.role, role)
+    isRoleHigherOrEqual(session.user.role, role),
   );
 
   if (!hasRequiredRole) {
@@ -72,7 +72,7 @@ export async function requirePermissions(permissions: Permission[]) {
   }
 
   const hasAnyPermission = permissions.some((permission) =>
-    hasPermission(session.user.role, permission)
+    hasPermission(session.user.role, permission),
   );
 
   if (!hasAnyPermission) {
@@ -94,7 +94,7 @@ export async function requireAllPermissions(permissions: Permission[]) {
   }
 
   const hasAllPermissions = permissions.every((permission) =>
-    hasPermission(session.user.role, permission)
+    hasPermission(session.user.role, permission),
   );
 
   if (!hasAllPermissions) {
@@ -124,7 +124,7 @@ export async function checkRole(roles: UserRole[]) {
   }
 
   const hasRequiredRole = roles.some((role) =>
-    isRoleHigherOrEqual(session.user.role, role)
+    isRoleHigherOrEqual(session.user.role, role),
   );
 
   return hasRequiredRole ? session : null;
@@ -160,7 +160,7 @@ export async function checkPermissions(permissions: Permission[]) {
   }
 
   const hasAnyPermission = permissions.some((permission) =>
-    hasPermission(session.user.role, permission)
+    hasPermission(session.user.role, permission),
   );
 
   return hasAnyPermission ? session : null;

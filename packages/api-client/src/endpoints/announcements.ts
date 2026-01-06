@@ -1,7 +1,11 @@
 // packages/api-client/src/endpoints/announcements.ts
 
-import type { Announcement, CreateAnnouncementRequest, PaginatedResponse } from '@ecity/types';
-import { ApiClient } from '../client';
+import type {
+  Announcement,
+  CreateAnnouncementRequest,
+  PaginatedResponse,
+} from "@ecity/types";
+import { ApiClient } from "../client";
 
 interface AnnouncementFilters {
   category?: string;
@@ -14,7 +18,9 @@ export class AnnouncementsApi {
   constructor(private client: ApiClient) {}
 
   // Отримати список оголошень з фільтрами
-  async getAll(filters?: AnnouncementFilters): Promise<PaginatedResponse<Announcement>> {
+  async getAll(
+    filters?: AnnouncementFilters,
+  ): Promise<PaginatedResponse<Announcement>> {
     const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -23,7 +29,7 @@ export class AnnouncementsApi {
     }
     const query = params.toString();
     return this.client.get<PaginatedResponse<Announcement>>(
-      `/api/v1/announcements${query ? `?${query}` : ''}`
+      `/api/v1/announcements${query ? `?${query}` : ""}`,
     );
   }
 
@@ -33,15 +39,18 @@ export class AnnouncementsApi {
   }
 
   // Створити нове оголошення
-  async create(data: CreateAnnouncementRequest, token: string): Promise<Announcement> {
-    return this.client.post<Announcement>('/api/v1/announcements', data, token);
+  async create(
+    data: CreateAnnouncementRequest,
+    token: string,
+  ): Promise<Announcement> {
+    return this.client.post<Announcement>("/api/v1/announcements", data, token);
   }
 
   // Оновити оголошення
   async update(
     id: string,
     data: Partial<CreateAnnouncementRequest>,
-    token: string
+    token: string,
   ): Promise<{ message: string }> {
     return this.client.put(`/api/v1/announcements/${id}`, data, token);
   }
@@ -53,6 +62,10 @@ export class AnnouncementsApi {
 
   // Зв'язатися з власником
   async contactOwner(id: string, token: string): Promise<{ message: string }> {
-    return this.client.post(`/api/v1/announcements/${id}/contact`, undefined, token);
+    return this.client.post(
+      `/api/v1/announcements/${id}/contact`,
+      undefined,
+      token,
+    );
   }
 }

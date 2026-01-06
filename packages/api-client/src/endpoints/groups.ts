@@ -1,19 +1,19 @@
 // packages/api-client/src/endpoints/groups.ts
 
-import type { Group, CreateGroupRequest } from '@ecity/types';
-import { ApiClient } from '../client';
+import type { Group, CreateGroupRequest } from "@ecity/types";
+import { ApiClient } from "../client";
 
 export class GroupsApi {
   constructor(private client: ApiClient) {}
 
   // Отримати всі групи користувача
   async getAll(token: string): Promise<Group[]> {
-    return this.client.get<Group[]>('/api/v1/groups', token);
+    return this.client.get<Group[]>("/api/v1/groups", token);
   }
 
   // Отримати публічні групи
   async getPublic(): Promise<Group[]> {
-    return this.client.get<Group[]>('/api/v1/groups/public');
+    return this.client.get<Group[]>("/api/v1/groups/public");
   }
 
   // Отримати групу за ID
@@ -23,7 +23,7 @@ export class GroupsApi {
 
   // Створити нову групу
   async create(data: CreateGroupRequest, token: string): Promise<Group> {
-    return this.client.post<Group>('/api/v1/groups', data, token);
+    return this.client.post<Group>("/api/v1/groups", data, token);
   }
 
   // Приєднатися до групи

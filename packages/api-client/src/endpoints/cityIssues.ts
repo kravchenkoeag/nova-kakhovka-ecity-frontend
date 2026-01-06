@@ -1,7 +1,12 @@
 // packages/api-client/src/endpoints/cityIssues.ts
 
-import type { CityIssue, CreateCityIssueRequest, AddIssueCommentRequest, PaginatedResponse } from '@ecity/types';
-import { ApiClient } from '../client';
+import type {
+  CityIssue,
+  CreateCityIssueRequest,
+  AddIssueCommentRequest,
+  PaginatedResponse,
+} from "@ecity/types";
+import { ApiClient } from "../client";
 
 interface CityIssueFilters {
   category?: string;
@@ -15,7 +20,9 @@ export class CityIssuesApi {
   constructor(private client: ApiClient) {}
 
   // Отримати список проблем міста з фільтрами
-  async getAll(filters?: CityIssueFilters): Promise<PaginatedResponse<CityIssue>> {
+  async getAll(
+    filters?: CityIssueFilters,
+  ): Promise<PaginatedResponse<CityIssue>> {
     const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -24,7 +31,7 @@ export class CityIssuesApi {
     }
     const query = params.toString();
     return this.client.get<PaginatedResponse<CityIssue>>(
-      `/api/v1/city-issues${query ? `?${query}` : ''}`
+      `/api/v1/city-issues${query ? `?${query}` : ""}`,
     );
   }
 
@@ -34,27 +41,38 @@ export class CityIssuesApi {
   }
 
   // Створити повідомлення про проблему
-  async create(data: CreateCityIssueRequest, token: string): Promise<CityIssue> {
-    return this.client.post<CityIssue>('/api/v1/city-issues', data, token);
+  async create(
+    data: CreateCityIssueRequest,
+    token: string,
+  ): Promise<CityIssue> {
+    return this.client.post<CityIssue>("/api/v1/city-issues", data, token);
   }
 
   // Проголосувати за проблему (upvote)
   async upvote(id: string, token: string): Promise<{ message: string }> {
-    return this.client.post(`/api/v1/city-issues/${id}/upvote`, undefined, token);
+    return this.client.post(
+      `/api/v1/city-issues/${id}/upvote`,
+      undefined,
+      token,
+    );
   }
 
   // Додати коментар
   async addComment(
     id: string,
     data: AddIssueCommentRequest,
-    token: string
+    token: string,
   ): Promise<any> {
     return this.client.post(`/api/v1/city-issues/${id}/comment`, data, token);
   }
 
   // Підписатися на оновлення
   async subscribe(id: string, token: string): Promise<{ message: string }> {
-    return this.client.post(`/api/v1/city-issues/${id}/subscribe`, undefined, token);
+    return this.client.post(
+      `/api/v1/city-issues/${id}/subscribe`,
+      undefined,
+      token,
+    );
   }
 
   // Відписатися від оновлень

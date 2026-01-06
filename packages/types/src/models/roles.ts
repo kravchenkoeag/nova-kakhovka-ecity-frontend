@@ -126,7 +126,7 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
 // Перевіряє чи має користувач конкретне дозволення
 export function hasPermission(
   userRole: UserRole,
-  permission: Permission
+  permission: Permission,
 ): boolean {
   const rolePermissions = RolePermissions[userRole] || [];
   return rolePermissions.includes(permission);
@@ -135,7 +135,7 @@ export function hasPermission(
 //Перевіряє чи має користувач хоча б одне з дозволень
 export function hasAnyPermission(
   userRole: UserRole,
-  permissions: Permission[]
+  permissions: Permission[],
 ): boolean {
   return permissions.some((permission) => hasPermission(userRole, permission));
 }
@@ -143,7 +143,7 @@ export function hasAnyPermission(
 // Перевіряє чи має користувач всі дозволення
 export function hasAllPermissions(
   userRole: UserRole,
-  permissions: Permission[]
+  permissions: Permission[],
 ): boolean {
   return permissions.every((permission) => hasPermission(userRole, permission));
 }
@@ -162,7 +162,7 @@ export function getRoleLevel(role: UserRole): number {
 //Перевіряє чи роль вища або рівна за необхідну
 export function isRoleHigherOrEqual(
   userRole: UserRole,
-  requiredRole: UserRole
+  requiredRole: UserRole,
 ): boolean {
   return getRoleLevel(userRole) >= getRoleLevel(requiredRole);
 }
@@ -176,7 +176,7 @@ export function isRoleHigherOrEqual(
  */
 export function canElevateTo(
   userRole: UserRole,
-  targetRole: UserRole
+  targetRole: UserRole,
 ): boolean {
   // Тільки адміни та супер-адміни можуть підвищувати ролі
   if (userRole !== UserRole.ADMIN && userRole !== UserRole.SUPER_ADMIN) {

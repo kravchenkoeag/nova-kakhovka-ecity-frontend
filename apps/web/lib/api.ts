@@ -10,7 +10,7 @@ import { createApiClient } from "@ecity/api-client";
  */
 export const apiClient = createApiClient(
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080",
-  true // ✅ Proxy mode для безпеки
+  true, // ✅ Proxy mode для безпеки
 );
 
 // Експорт типу для використання в інших файлах

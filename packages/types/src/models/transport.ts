@@ -1,6 +1,6 @@
 // packages/types/src/models/transport.ts
 
-import type { ObjectId, Location } from './common';
+import type { ObjectId, Location } from "./common";
 
 export interface TransportStop {
   id: ObjectId;
@@ -30,7 +30,7 @@ export interface TransportRoute {
   id: ObjectId;
   route_number: string;
   route_name: string;
-  transport_type: 'bus' | 'trolley' | 'minibus' | 'taxi';
+  transport_type: "bus" | "trolley" | "minibus" | "taxi";
   stops: TransportStop[];
   path_coords: Location[];
   total_distance: number;
@@ -51,7 +51,7 @@ export interface TransportVehicle {
   id: ObjectId;
   vehicle_number: string;
   route_id: ObjectId;
-  transport_type: 'bus' | 'trolley' | 'minibus' | 'taxi';
+  transport_type: "bus" | "trolley" | "minibus" | "taxi";
   model?: string;
   capacity: number;
   is_accessible: boolean;
@@ -59,10 +59,10 @@ export interface TransportVehicle {
   has_ac: boolean;
   current_location?: Location;
   current_stop_id?: ObjectId;
-  direction?: 'forward' | 'backward';
+  direction?: "forward" | "backward";
   speed?: number;
   last_update?: string;
-  status: 'active' | 'maintenance' | 'out_of_service';
+  status: "active" | "maintenance" | "out_of_service";
   is_tracked: boolean;
   driver_id?: ObjectId;
   created_at: string;

@@ -91,7 +91,7 @@ export class EcityApiClient {
  */
 export const createApiClient = (
   baseUrl: string,
-  useProxy = false
+  useProxy = false,
 ): EcityApiClient => {
   return new EcityApiClient(baseUrl, useProxy);
 };

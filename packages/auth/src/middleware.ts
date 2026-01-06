@@ -10,13 +10,13 @@ export async function createAuthMiddleware(
   options: {
     requireModerator?: boolean;
     publicPaths?: string[];
-  } = {}
+  } = {},
 ) {
   const { requireModerator = false, publicPaths = [] } = options;
 
   // Перевіряємо чи це публічний шлях
   const isPublicPath = publicPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
+    request.nextUrl.pathname.startsWith(path),
   );
 
   if (isPublicPath) {

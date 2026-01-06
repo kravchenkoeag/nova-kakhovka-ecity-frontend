@@ -19,7 +19,7 @@ import {
  */
 export function withAuth<P extends object>(
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) {
   return function AuthenticatedComponent(props: P) {
     const isAuthenticated = useIsAuthenticated();
@@ -45,7 +45,7 @@ export function withAuth<P extends object>(
 export function withRole<P extends object>(
   roles: UserRole | UserRole[],
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) {
   return function RoleProtectedComponent(props: P) {
     const roleArray = Array.isArray(roles) ? roles : [roles];
@@ -65,7 +65,7 @@ export function withRole<P extends object>(
 export function withPermission<P extends object>(
   permission: Permission,
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) {
   return function PermissionProtectedComponent(props: P) {
     const hasPermission = useHasPermission(permission);
@@ -85,7 +85,7 @@ export function withPermissions<P extends object>(
   permissions: Permission[],
   requireAll: boolean = false,
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) {
   return function PermissionsProtectedComponent(props: P) {
     const hasPermissions = requireAll
@@ -106,7 +106,7 @@ export function withPermissions<P extends object>(
 export function withMinimumRole<P extends object>(
   minimumRole: UserRole,
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) {
   return function MinimumRoleProtectedComponent(props: P) {
     const hasMinimumRole = useIsRoleHigherOrEqual(minimumRole);
@@ -131,7 +131,7 @@ export function withAuthConditions<P extends object>(
     minimumRole?: UserRole;
   },
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) {
   return function AuthConditionsProtectedComponent(props: P) {
     const {
@@ -185,17 +185,17 @@ export function withAuthConditions<P extends object>(
  */
 export const withAdminOnly = <P extends object>(
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) => withMinimumRole(UserRole.ADMIN, Component, fallback);
 
 export const withModeratorOnly = <P extends object>(
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) => withMinimumRole(UserRole.MODERATOR, Component, fallback);
 
 export const withSuperAdminOnly = <P extends object>(
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) => withRole([UserRole.SUPER_ADMIN], Component, fallback);
 
 /**
@@ -203,7 +203,7 @@ export const withSuperAdminOnly = <P extends object>(
  */
 export const withUserManagement = <P extends object>(
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) => withPermission(Permission.MANAGE_USERS, Component, fallback);
 
 /**
@@ -211,7 +211,7 @@ export const withUserManagement = <P extends object>(
  */
 export const withModeration = <P extends object>(
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) =>
   withPermissions(
     [
@@ -222,7 +222,7 @@ export const withModeration = <P extends object>(
     ],
     false,
     Component,
-    fallback
+    fallback,
   );
 
 /**
@@ -230,7 +230,7 @@ export const withModeration = <P extends object>(
  */
 export const withContentCreation = <P extends object>(
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ) =>
   withPermissions(
     [
@@ -241,5 +241,5 @@ export const withContentCreation = <P extends object>(
     ],
     false,
     Component,
-    fallback
+    fallback,
   );

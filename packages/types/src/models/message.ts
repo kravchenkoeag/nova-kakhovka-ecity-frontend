@@ -1,5 +1,5 @@
 // packages/types/src/models/message.ts
-import type { ObjectId } from './common';
+import type { ObjectId } from "./common";
 export interface MessageReaction {
   user_id: ObjectId;
   reaction: string;
@@ -16,7 +16,7 @@ export interface Message {
   group_id: ObjectId;
   user_id: ObjectId;
   content: string;
-  type: 'text' | 'image' | 'video' | 'file' | 'link';
+  type: "text" | "image" | "video" | "file" | "link";
   media_url?: string;
   media_type?: string;
   media_size?: number;

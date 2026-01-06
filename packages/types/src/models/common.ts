@@ -3,12 +3,12 @@
 export type ObjectId = string;
 
 export interface Location {
-  type: 'Point';
+  type: "Point";
   coordinates: [number, number]; // [longitude, latitude]
 }
 
 export interface ContactInfo {
-  type: 'phone' | 'email' | 'telegram' | 'viber' | 'whatsapp';
+  type: "phone" | "email" | "telegram" | "viber" | "whatsapp";
   value: string;
   label?: string;
 }

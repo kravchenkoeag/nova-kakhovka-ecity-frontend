@@ -43,7 +43,7 @@ export class AuthApi {
    */
   async updateProfile(
     data: Partial<User>,
-    token: string
+    token: string,
   ): Promise<{ message: string }> {
     return this.client.put("/api/v1/profile", data, token);
   }

@@ -175,7 +175,7 @@ export default function AdminLoginPage() {
                       <p className="text-sm">
                         <span className="font-medium">Дата блокування:</span>{" "}
                         {new Date(blockedInfo.blockedAt).toLocaleString(
-                          "uk-UA"
+                          "uk-UA",
                         )}
                       </p>
                     )}

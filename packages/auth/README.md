@@ -209,19 +209,19 @@ const ProtectedButton = withPermission(
   Permission.MODERATE_ANNOUNCEMENT,
   ({ onClick }: { onClick: () => void }) => (
     <button onClick={onClick}>Moderate</button>
-  )
+  ),
 );
 
 // Role-based protection
 const AdminOnlyComponent = withRole(
   [UserRole.ADMIN, UserRole.SUPER_ADMIN],
-  () => <div>Admin only content</div>
+  () => <div>Admin only content</div>,
 );
 
 // Authentication protection
 const AuthenticatedComponent = withAuth(
   () => <div>Logged in content</div>,
-  <div>Please log in</div>
+  <div>Please log in</div>,
 );
 ```
 
@@ -349,7 +349,7 @@ import { UserRole, Permission } from "@gly/types";
 // Check permissions
 const canDelete = hasPermission(
   UserRole.MODERATOR,
-  Permission.MODERATE_ANNOUNCEMENT
+  Permission.MODERATE_ANNOUNCEMENT,
 );
 
 // Check user management
