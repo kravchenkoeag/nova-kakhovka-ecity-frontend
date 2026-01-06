@@ -63,10 +63,9 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // ✅ ВИПРАВЛЕНО: Правильний URL - /api/v1/login (БЕЗ /auth/)
-          // Backend endpoint: POST /api/v1/login
+          // Backend endpoint: POST /api/v1/auth/login
           const response = await fetch(
-            `${process.env.BACKEND_URL}/api/v1/login`,
+            `${process.env.BACKEND_URL}/api/v1/auth/login`,
             {
               method: "POST",
               headers: {
@@ -76,7 +75,7 @@ export const authOptions: NextAuthOptions = {
                 email: credentials.email,
                 password: credentials.password,
               }),
-            },
+            }
           );
 
           // Обробка помилок від backend
@@ -96,7 +95,7 @@ export const authOptions: NextAuthOptions = {
 
           // Map backend role to frontend role
           const role = mapBackendRoleToFrontend(
-            data.user.role || (data.user.is_moderator ? "MODERATOR" : "USER"),
+            data.user.role || (data.user.is_moderator ? "MODERATOR" : "USER")
           );
 
           // Get permissions for the role

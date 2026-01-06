@@ -60,7 +60,7 @@ export default function RegisterPage() {
 
       // Відправляємо запит напряму (для debug)
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/register`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/register`,
         {
           method: "POST",
           headers: {
