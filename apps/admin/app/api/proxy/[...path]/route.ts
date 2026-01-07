@@ -19,7 +19,7 @@ import { hasPermission } from "@ecity/auth";
  */
 async function proxyHandler(
   req: NextRequest,
-  { params }: { params: { path: string[] } },
+  { params }: { params: { path: string[] } }
 ) {
   try {
     // 🔒 КРИТИЧНО: Перевіряємо авторизацію та дозволення
@@ -37,7 +37,7 @@ async function proxyHandler(
     if (!userRole) {
       return NextResponse.json(
         { error: "User role not found" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -45,7 +45,7 @@ async function proxyHandler(
     if (!hasPermission(userRole, Permission.MODERATE_ANNOUNCEMENT)) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
-        { status: 403 },
+        { status: 403 }
       );
     }
 
@@ -54,7 +54,7 @@ async function proxyHandler(
 
     // Будуємо повний шлях до backend API
     const path = params.path.join("/");
-    const targetUrl = `${backendUrl}/api/v1/${path}`;
+    const targetUrl = `${backendUrl}/${path}`;
 
     // Копіюємо query parameters з оригінального запиту
     const url = new URL(targetUrl);
@@ -125,7 +125,7 @@ async function proxyHandler(
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      },
+      }
     );
   }
 }
@@ -141,7 +141,7 @@ async function proxyHandler(
 // GET запити - перегляд даних
 export async function GET(
   req: NextRequest,
-  context: { params: Promise<{ path: string[] }> },
+  context: { params: Promise<{ path: string[] }> }
 ) {
   const params = await context.params; // ✅ await params
   return proxyHandler(req, { params });
@@ -150,7 +150,7 @@ export async function GET(
 // POST запити - створення нових записів
 export async function POST(
   req: NextRequest,
-  context: { params: Promise<{ path: string[] }> },
+  context: { params: Promise<{ path: string[] }> }
 ) {
   const params = await context.params; // ✅ await params
   return proxyHandler(req, { params });
@@ -159,7 +159,7 @@ export async function POST(
 // PUT запити - повне оновлення записів
 export async function PUT(
   req: NextRequest,
-  context: { params: Promise<{ path: string[] }> },
+  context: { params: Promise<{ path: string[] }> }
 ) {
   const params = await context.params; // ✅ await params
   return proxyHandler(req, { params });
@@ -168,7 +168,7 @@ export async function PUT(
 // PATCH запити - часткове оновлення записів
 export async function PATCH(
   req: NextRequest,
-  context: { params: Promise<{ path: string[] }> },
+  context: { params: Promise<{ path: string[] }> }
 ) {
   const params = await context.params; // ✅ await params
   return proxyHandler(req, { params });
@@ -177,7 +177,7 @@ export async function PATCH(
 // DELETE запити - видалення записів
 export async function DELETE(
   req: NextRequest,
-  context: { params: Promise<{ path: string[] }> },
+  context: { params: Promise<{ path: string[] }> }
 ) {
   const params = await context.params; // ✅ await params
   return proxyHandler(req, { params });
