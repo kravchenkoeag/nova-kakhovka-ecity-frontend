@@ -1,4 +1,4 @@
-// apps/admin/app/(dashboard)/users/[id]/page.tsx
+// apps/admin/app/dashboard/users/[id]/page.tsx
 
 import { notFound } from "next/navigation";
 import { requirePermission, getAccessToken } from "@ecity/auth";

@@ -1,4 +1,4 @@
-// apps/admin/app/(dashboard)/users/page.tsx
+// apps/admin/app/dashboard/users/page.tsx
 
 import { Suspense } from "react";
 import { redirect } from "next/navigation";

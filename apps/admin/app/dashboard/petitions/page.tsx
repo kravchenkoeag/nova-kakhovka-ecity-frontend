@@ -1,4 +1,4 @@
-// apps/admin/app/(dashboard)/petitions/page.tsx
+// apps/admin/app/dashboard/petitions/page.tsx
 
 "use client";
 

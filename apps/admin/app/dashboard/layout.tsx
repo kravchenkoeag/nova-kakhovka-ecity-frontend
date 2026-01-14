@@ -1,4 +1,4 @@
-// apps/admin/app/(dashboard)/layout.tsx
+// apps/admin/app/dashboard/layout.tsx
 
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";

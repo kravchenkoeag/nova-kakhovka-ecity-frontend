@@ -1,4 +1,4 @@
-// apps/admin/app/(dashboard)/groups/page.tsx
+// apps/admin/app/dashboard/groups/page.tsx
 
 import { Suspense } from "react";
 import { requirePermission } from "@ecity/auth";

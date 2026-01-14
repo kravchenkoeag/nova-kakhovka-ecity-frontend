@@ -1,4 +1,4 @@
-// apps/admin/app/(dashboard)/users/UsersManagementClient.tsx
+// apps/admin/app/dashboard/users/UsersManagementClient.tsx
 
 "use client";
 
