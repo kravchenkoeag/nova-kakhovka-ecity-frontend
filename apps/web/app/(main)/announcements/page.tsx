@@ -8,11 +8,13 @@ import { Megaphone, Plus, Calendar } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { uk } from "date-fns/locale";
+import { useSession } from "next-auth/react";
 
 /**
  * Сторінка оголошень - показує список всіх оголошень з можливістю фільтрації
  */
 export default function AnnouncementsPage() {
+  const { data: session } = useSession();
   // Отримуємо оголошення через виправлений хук
   const { data: announcementsData, isLoading } = useAnnouncements();
 
@@ -37,12 +39,14 @@ export default function AnnouncementsPage() {
             Офіційні оголошення від міської влади та організацій
           </p>
         </div>
-        <Link href="/announcements/create">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Додати оголошення
-          </Button>
-        </Link>
+        {session && (
+          <Link href="/announcements/create">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Додати оголошення
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Фільтри за категоріями */}

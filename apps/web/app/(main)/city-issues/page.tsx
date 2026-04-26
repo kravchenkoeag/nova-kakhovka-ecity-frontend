@@ -8,11 +8,13 @@ import { MapPin, Plus, AlertCircle, CheckCircle, Clock } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { uk } from "date-fns/locale";
+import { useSession } from "next-auth/react";
 
 /**
  * Сторінка проблем міста - показує список всіх повідомлень про проблеми
  */
 export default function CityIssuesPage() {
+  const { data: session } = useSession();
   // Отримуємо проблеми через хук
   const { data: issuesData, isLoading } = useCityIssues();
 
@@ -68,12 +70,14 @@ export default function CityIssuesPage() {
               Карта
             </Button>
           </Link>
-          <Link href="/city-issues/report">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Повідомити про проблему
-            </Button>
-          </Link>
+          {session && (
+            <Link href="/city-issues/report">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Повідомити про проблему
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 

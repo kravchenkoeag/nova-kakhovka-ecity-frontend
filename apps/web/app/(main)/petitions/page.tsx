@@ -8,11 +8,13 @@ import { FileText, Plus, Target, Users, Calendar } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { uk } from "date-fns/locale";
+import { useSession } from "next-auth/react";
 
 /**
  * Сторінка петицій - показує список всіх петицій з можливістю фільтрації
  */
 export default function PetitionsPage() {
+  const { data: session } = useSession();
   // Отримуємо петиції через хук
   const { data: petitionsData, isLoading } = usePetitions();
 
@@ -39,12 +41,14 @@ export default function PetitionsPage() {
             Впливайте на рішення міської влади через петиції
           </p>
         </div>
-        <Link href="/petitions/create">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Створити петицію
-          </Button>
-        </Link>
+        {session && (
+          <Link href="/petitions/create">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Створити петицію
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Фільтри за категоріями */}

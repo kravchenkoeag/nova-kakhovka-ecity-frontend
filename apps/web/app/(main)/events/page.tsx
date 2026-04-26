@@ -8,11 +8,13 @@ import { Calendar, MapPin, Users, Plus } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { uk } from "date-fns/locale";
+import { useSession } from "next-auth/react";
 
 /**
  * Сторінка подій - показує список всіх культурних та соціальних заходів
  */
 export default function EventsPage() {
+  const { data: session } = useSession();
   // Отримуємо події через виправлений хук
   const { data: eventsData, isLoading } = useEvents();
 
@@ -37,12 +39,14 @@ export default function EventsPage() {
             Культурні та соціальні заходи в місті
           </p>
         </div>
-        <Link href="/events/create">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Створити подію
-          </Button>
-        </Link>
+        {session && (
+          <Link href="/events/create">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Створити подію
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Фільтри за категоріями */}
