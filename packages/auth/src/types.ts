@@ -4,30 +4,30 @@ import "next-auth";
 import "next-auth/jwt";
 import { UserRole, Permission } from "@ecity/types";
 
-// Розширюємо типи NextAuth для наших кастомних полів
 declare module "next-auth" {
   interface User {
     id: string;
     email: string;
     name: string;
-    username: string; // Додано username
+    username: string;
     accessToken: string;
+    refreshToken: string;
+    accessTokenExpires: number; // Unix timestamp (ms)
     role: UserRole;
     permissions: Permission[];
-    // Legacy field for backward compatibility
     isModerator?: boolean;
   }
 
   interface Session {
+    error?: "RefreshTokenExpired" | "RefreshAccessTokenError";
     user: {
       id: string;
       email: string;
       name: string;
-      username: string; // Додано username
+      username: string;
       accessToken: string;
       role: UserRole;
       permissions: Permission[];
-      // Legacy field for backward compatibility
       isModerator?: boolean;
     };
   }
@@ -37,10 +37,12 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     accessToken: string;
-    username: string; // Додано username
+    refreshToken: string;
+    accessTokenExpires: number; // Unix timestamp (ms)
+    username: string;
     role: UserRole;
     permissions: Permission[];
-    // Legacy field for backward compatibility
     isModerator?: boolean;
+    error?: "RefreshTokenExpired" | "RefreshAccessTokenError";
   }
 }

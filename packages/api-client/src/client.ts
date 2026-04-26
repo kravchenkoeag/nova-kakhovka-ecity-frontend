@@ -43,20 +43,23 @@ export class ApiClient {
   ): Promise<T> {
     const { token, ...fetchConfig } = config;
 
-    // Визначаємо URL залежно від режиму
-    const url = this.useProxy
-      ? `/api/proxy${endpoint}` // Через Next.js proxy
-      : `${this.baseUrl}${endpoint}`; // Прямо до backend
+    // Proxy потрібний тільки для автентифікованих запитів:
+    // - Приховує access token від браузера
+    // - Для публічних GET (без токена) — прямий запит до бекенду, щоб уникнути
+    //   накладних витрат від getServerSession() на кожен запит
+    const needsProxy = this.useProxy && (config.method !== "GET" || !!token);
 
-    // Створюємо об'єкт headers
+    const url = needsProxy
+      ? `/api/proxy${endpoint}` // Автентифіковані запити — через Next.js proxy
+      : `${this.baseUrl}${endpoint}`; // Публічні GET — прямо до backend
+
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       ...(config.headers as Record<string, string>),
     };
 
-    // 🔒 КРИТИЧНО: Токен передаємо тільки якщо НЕ використовуємо proxy
-    // В proxy режимі токени додаються автоматично на server-side
-    if (token && !this.useProxy) {
+    // Токен додаємо тільки в direct-mode (не proxy)
+    if (token && !needsProxy) {
       headers["Authorization"] = `Bearer ${token}`;
     }
 

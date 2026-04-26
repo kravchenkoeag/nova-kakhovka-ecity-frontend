@@ -23,10 +23,14 @@ export interface LoginRequest {
 }
 
 /**
- * Response від auth endpoints
+ * Response від auth endpoints (login / register)
+ * Відповідає backend LoginResponse struct
  */
 export interface AuthResponse {
-  token: string;
+  access_token: string;
+  refresh_token: string;
+  token_type: string;      // "Bearer"
+  expires_in: number;      // секунди до закінчення access token
   user: User;
 }
 

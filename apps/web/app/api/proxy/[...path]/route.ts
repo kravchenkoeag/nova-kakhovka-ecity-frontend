@@ -21,39 +21,30 @@ async function proxyHandler(
   { params }: { params: { path: string[] } }
 ) {
   try {
-    // 🔒 КРИТИЧНО: Отримуємо сесію користувача
+    // Отримуємо сесію — може бути null для гостей
     const session = await getServerSession(authOptions);
 
-    // Перевірка авторизації
-    if (!session?.user?.accessToken) {
-      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // Отримуємо backend URL з environment
     const backendUrl = process.env.BACKEND_URL || "http://localhost:8080";
 
-    // Будуємо повний шлях до backend API
     const path = params.path.join("/");
     const targetUrl = `${backendUrl}/${path}`;
 
-    // Копіюємо query parameters з оригінального запиту
     const url = new URL(targetUrl);
     req.nextUrl.searchParams.forEach((value, key) => {
       url.searchParams.append(key, value);
     });
 
-    // Готуємо headers для backend запиту
+    // Готуємо headers — Authorization додаємо тільки якщо є сесія
     const headers: HeadersInit = {
       "Content-Type": "application/json",
-      // 🔒 КРИТИЧНО: Використовуємо accessToken з session
-      Authorization: `Bearer ${session.user.accessToken}`,
-      // Форвардимо інші важливі headers
       "User-Agent": req.headers.get("user-agent") || "",
       Accept: req.headers.get("accept") || "application/json",
     };
+
+    if (session?.user?.accessToken) {
+      (headers as Record<string, string>)["Authorization"] =
+        `Bearer ${session.user.accessToken}`;
+    }
 
     // Готуємо body для POST/PUT/PATCH запитів
     let body: string | undefined = undefined;

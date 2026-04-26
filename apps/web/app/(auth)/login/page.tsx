@@ -31,13 +31,19 @@ export default function WebLoginPage() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/profile";
 
+  const reason = searchParams.get("reason");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    reason === "session_expired" ? "Сесію завершено. Будь ласка, увійдіть знову." : null
+  );
   const [blockedInfo, setBlockedInfo] = useState<{
     reason?: string;
     blockedAt?: string;
+    lockedUntil?: string;
+    retryAfterSeconds?: number;
   } | null>(null);
 
   // Обробка логіну через NextAuth
@@ -66,11 +72,17 @@ export default function WebLoginPage() {
             setError(
               "Ваш акаунт заблоковано. Для отримання додаткової інформації дивіться деталі нижче.",
             );
+          } else if (errorData.code === "ACCOUNT_LOCKED") {
+            setBlockedInfo({
+              lockedUntil: errorData.locked_until,
+              retryAfterSeconds: errorData.retry_after_seconds,
+            });
+            const minutes = Math.ceil((errorData.retry_after_seconds ?? 900) / 60);
+            setError(`Акаунт тимчасово заблоковано. Спробуйте через ${minutes} хв.`);
           } else {
-            setError(errorData.message || "Невірний email або пароль");
+            setError(errorData.message || errorData.error || "Невірний email або пароль");
           }
         } catch {
-          // Якщо не JSON, просто виводимо помилку
           setError(result.error);
         }
       } else if (result?.ok) {
@@ -206,6 +218,25 @@ export default function WebLoginPage() {
                         </p>
                       </div>
                     </div>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Temporarily locked account */}
+              {blockedInfo?.retryAfterSeconds && (
+                <Alert variant="destructive" className="border-orange-300">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    <p className="font-semibold">Тимчасове блокування</p>
+                    <p className="text-sm mt-1">
+                      Забагато невдалих спроб. Акаунт розблокується автоматично.
+                    </p>
+                    {blockedInfo.lockedUntil && (
+                      <p className="text-sm mt-1">
+                        Розблокування:{" "}
+                        {new Date(blockedInfo.lockedUntil).toLocaleTimeString("uk-UA")}
+                      </p>
+                    )}
                   </AlertDescription>
                 </Alert>
               )}
